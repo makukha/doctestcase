@@ -1,4 +1,7 @@
-.. include:: title.md
+doctestcase
+===========
+
+.. include:: desc.md
     :parser: commonmark
 
 .. toctree::
@@ -6,20 +9,45 @@
     :caption: Details
     :hidden:
 
+    api
     changelog
 
 .. include:: badges.md
     :parser: commonmark
 
+Features
+--------
+
 .. include:: features.md
     :parser: commonmark
+
+Alternatives
+------------
 
 .. include:: alternatives.md
     :parser: commonmark
 
-.. include:: installation.rst
+Installation
+------------
+
+.. tab-set::
+
+    .. tab-item:: pip
+
+        .. code:: shell
+
+            $ pip install doctestcase
+
+    .. tab-item:: uv
+
+        .. code:: shell
+
+            $ uv add doctestcase
+
+.. _usage:
+
+Usage
+-----
 
 .. include:: usage.md
     :parser: commonmark
-
-.. include:: api.rst

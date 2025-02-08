@@ -19,7 +19,9 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.extlinks',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinx_copybutton',
     'sphinx_design',
     'sphinx_sitemap',
 ]
@@ -33,6 +35,7 @@ templates_path = ['_templates']
 # autodoc
 add_module_names = False
 autoclass_content = 'both'
+autodoc_class_signature = 'separated'
 autodoc_docstring_signature = True
 autodoc_member_order = 'bysource'
 autodoc_typehints = 'signature'

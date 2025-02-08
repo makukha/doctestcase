@@ -1,12 +1,7 @@
 API Reference
 =============
 
-.. currentmodule:: doctestcase.case
-
-.. autosummary::
-    :nosignatures:
-
-    DocTestCase
-
-.. automodule:: doctestcase
+.. autoclass:: doctestcase.case.DocTestCase
+    :class-doc-from: class
+    :exclude-members: __init__
     :members:
