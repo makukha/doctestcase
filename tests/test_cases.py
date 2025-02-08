@@ -10,8 +10,7 @@ class MissingDocstring(DocTestCase):
 
 
 class EmptyDocstring(DocTestCase):
-    """"""
-    # pass with empty docstring
+    """"""  # pass with empty docstring
 
     def test_formatting(self):
         self.assertEquals(self.to_markdown(), '')

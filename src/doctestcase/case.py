@@ -124,7 +124,6 @@ class DocTestCase(TestCase):
 
         return ''.join(lines)
 
-
     @classmethod
     def to_rest(cls, title_char='-'):
         """
