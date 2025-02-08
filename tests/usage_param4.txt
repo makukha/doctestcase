@@ -1,0 +1,15 @@
+>>> T1.doc_rst()
+Use case title
+==============
+
+Optional paragraphs describing the use case.
+
+>>> # here goes the doctest example
+>>> os.getcwd()
+...
+
+More text.
+
+>>> # another doctest example
+>>> True
+True

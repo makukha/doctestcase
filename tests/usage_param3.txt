@@ -1,0 +1,18 @@
+>>> T1.doc_markdown()
+# Use case title
+
+Optional paragraphs describing the use case.
+
+```pycon
+>>> # here goes the doctest example
+>>> os.getcwd()
+...
+```
+
+More text.
+
+```pycon
+>>> # another doctest example
+>>> True
+True
+```

@@ -1,0 +1,7 @@
+>>> T1.doc_md()
+# Multiline title
+
+```pycon
+>>> True
+True
+```

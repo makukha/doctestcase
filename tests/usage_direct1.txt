@@ -1,0 +1,9 @@
+>>> from doctestcase import DocTestCase
+>>> class T1(DocTestCase):
+...     """
+...     Multiline
+...     title
+...
+...     >>> True
+...     True
+...     """
