@@ -6,7 +6,6 @@ from doctest import (
     Example,
     FAIL_FAST,
 )
-from itertools import chain
 import re
 from typing import Any, ClassVar
 from unittest import TestCase
@@ -46,8 +45,10 @@ class DocTestCase(TestCase):
 
     globs: ClassVar[dict[str, Any]]
     opts: ClassVar[int]
+    __test__ = False  # don't run tests on this abstract base class
 
     def __init_subclass__(cls, globs=None, opts=ELLIPSIS | FAIL_FAST):
+        cls.__test__ = True
         cls.globs = globs or {}
         cls.opts = opts
 
@@ -107,22 +108,15 @@ class DocTestCase(TestCase):
         lines = ['{} {}\n'.format('#' * title_depth, title)]
 
         # format body
-        if body:
-            block = []
-            for item in chain(DocTestParser().parse(body), ('')):  # '' closes block
-                if isinstance(item, Example):
-                    if not block:  # open doctest block
-                        block.append('```pycon\n')
-                    block.append(item.source)
-                else:
-                    if block:  # close doctest block if any
-                        block.append(item)
-                        lines.extend(block)
-                        lines.append('```\n')
-                        block = []
-                    lines.append(item)  # append interleaving text
+        for item in parse(body):
+            if isinstance(item, ExampleBlock):
+                lines.append('```pycon')
+                lines.extend(item)
+                lines.append('```')
+            else:
+                lines.append(item)
 
-        return ''.join(lines)
+        return '\n'.join(lines)
 
     @classmethod
     def to_rest(cls, title_char='-'):
@@ -174,12 +168,46 @@ class DocTestCase(TestCase):
     @classmethod
     def _parts(cls):
         # check missing or empty docstring
-        if cls.__doc__ == DocTestCase.__doc__:
-            return None, None
-        doc = cls.__doc__.strip() + '\n'
+        doc = (cls.__doc__ or '').strip()
         if not doc:
             return None, None
         # parse title and body
         if (match := _RX_DOCSTRING.match(doc)) is None:
             return None, None
-        return match.group('title'), match.group('body')
+        body = match.group('body')
+        return match.group('title'), body + '\n' if body else body
+
+
+# helpers
+
+
+class ExampleBlock(list):
+    ...
+
+
+def parse(text):
+    lines = text.splitlines()
+    END = object()
+    items = DocTestParser().parse(text) + [END]
+    outln = -1  # index of the last line returned
+    exbeg = None  # index of the first line in the block of examples
+    exend = None  # first line of last example in the block
+    for item in items:
+        if isinstance(item, Example):
+            exend = item.lineno
+            if exbeg is None:  # new block of examples
+                exbeg = item.lineno
+                yield from lines[outln + 1 : exbeg - 1]  # yield preceding str lines
+                outln = exbeg - 1
+            else:
+                pass  # lines for this example will be returned when block is closed
+        else:
+            if exbeg is not None:  # close existing block of examples
+                try:
+                    exend = lines.index('', start=exend)  # blank line closes example
+                except ValueError:
+                    exend = len(lines)
+                yield ExampleBlock(lines[exbeg:exend])
+                outln = exend - 1
+            if item is not END:  # last technical token only triggered block closing
+                yield item

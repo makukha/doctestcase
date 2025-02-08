@@ -1,7 +1,9 @@
->>> T1.to_markdown()
-# Multiline title
-
-```pycon
->>> True
+>>> T1.to_markdown() == """\
+... # Multiline title
+...
+... ```pycon
+... >>> True
+... True
+... ```
+... """
 True
-```
