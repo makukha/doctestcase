@@ -25,7 +25,7 @@ class EmptyDocstring(DocTestCase):
 
 class TitleWithoutTrailingNewline(DocTestCase):
     """
-    Title"""  # noqa
+    Title"""
 
     def test_formatting(self):
         self.assertEqual('# Title\n', self.to_markdown())
@@ -44,8 +44,10 @@ class TitleWithMultipleTrailingNewlines(DocTestCase):
 
 
 class TitleOnFirstLine(DocTestCase):
+    # fmt: off
     """Title
     """
+    # fmt: on
 
     def test_formatting(self):
         self.assertEqual('# Title\n', self.to_markdown())
