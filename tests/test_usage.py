@@ -15,8 +15,8 @@ def run_doctest_files(test_case, paths):  # type: (TestCase, tuple[str, ...]) ->
 class TestDirect(TestCase):
     def runTest(self):  # type: () -> None
         paths = (
-            'tests/usage_direct1.txt',
-            'tests/usage_direct2.txt',
+            'tests/usage/direct1.txt',
+            'tests/usage/direct2.txt',
         )
         run_doctest_files(self, paths)
 
@@ -24,9 +24,9 @@ class TestDirect(TestCase):
 class TestParam(TestCase):
     def runTest(self):  # type: () -> None
         paths = (
-            'tests/usage_param1.txt',
-            'tests/usage_param2.txt',
-            'tests/usage_param3.txt',
-            'tests/usage_param4.txt',
+            'tests/usage/param1.txt',
+            'tests/usage/param2.txt',
+            'tests/usage/param3.txt',
+            'tests/usage/param4.txt',
         )
         run_doctest_files(self, paths)
