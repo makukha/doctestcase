@@ -4,10 +4,11 @@ from unittest import TestCase
 
 
 _R_BLANK = r'\n[ \t]*$'
-_RX_DOCSTRING = re.compile(rf'''
+_RX_DOCSTRING = re.compile(
+    rf"""
     (?P<title>.+?)
     ((?:{_R_BLANK})+\n(?P<body>.*?))?
-    ''',
+    """,
     flags=re.DOTALL | re.MULTILINE | re.VERBOSE,
 )
 
@@ -184,7 +185,8 @@ class ExampleBlock(str):
     """Marker type to represent lines of block of examples"""
 
 
-_EXBLOCK_RE = re.compile(r'''
+_EXBLOCK_RE = re.compile(
+    r"""
     # Example block consists of a PS1 line followed by non-blank line
     #   or a series of blank lines followed by PS1 line.
     ^(?= [ ]* >>> )  # starts with PS1 line
@@ -194,7 +196,7 @@ _EXBLOCK_RE = re.compile(r'''
       |(?: \n [ ]* $)+ (?= \n [ ]* >>> ) $  # blank lines followed by PS1 line
     )*
     \n
-    ''',
+    """,
     flags=re.MULTILINE | re.VERBOSE,
 )
 
@@ -203,7 +205,7 @@ def parse(text):
     string = (text if text.endswith('\n') else text + '\n').expandtabs()
     charno = 0
     for m in _EXBLOCK_RE.finditer(string):
-        yield string[charno:m.start()]
-        yield ExampleBlock(string[m.start():m.end()])
+        yield string[charno : m.start()]
+        yield ExampleBlock(string[m.start() : m.end()])
         charno = m.end()
     yield string[charno:]

@@ -26,20 +26,21 @@ class WithException(DocTestCase):
 
     Text1
 
-    >>> 0/0
+    >>> 0 / 0
     Traceback (most recent call last):
         ...
     ZeroDivisionError: division by zero
 
     Text2
     """
+
     def test_formatting(self):
-        exc = dedent('''\
+        exc = dedent("""\
         Traceback (most recent call last):
             ...
         ZeroDivisionError: division by zero
-        ''')
-        doctest = '>>> 0/0\n{}'.format(exc)
+        """)
+        doctest = '>>> 0 / 0\n{}'.format(exc)
         self.assertEqual(
             '# Title\n\nText1\n\n```pycon\n{}```\n\nText2\n'.format(doctest),
             self.to_markdown(),
@@ -65,6 +66,7 @@ class MultipleMultiline(DocTestCase):
     >>> 2
     2
     """
+
     def test_formatting(self):
         self.assertEqual(
             '# T\n'
