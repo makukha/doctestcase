@@ -182,7 +182,7 @@ class DocTestCase(TestCase):
 
 
 class ExampleBlock(list):
-    ...
+    """Marker type to represent lines of block of examples"""
 
 
 def parse(text):
