@@ -1,15 +1,19 @@
->>> T1.to_rest()
-Use case title
-==============
-
-Optional paragraphs describing the use case.
-
->>> # here goes the doctest example
->>> os.getcwd()
+>>> T1.to_rest() == """\
+... Use case title
+... --------------
 ...
-
-More text.
-
->>> # another doctest example
->>> True
+... Optional paragraphs describing the use case.
+...
+... >>> # here goes the doctest example
+... >>> os.getcwd()
+... ...
+...
+... More text.
+...
+... Multiple paragraphs.
+...
+... >>> # another doctest example
+... >>> True
+... True
+... """
 True

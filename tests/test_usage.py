@@ -12,13 +12,13 @@ def run_doctest_files(test_case, paths):  # type: (TestCase, tuple[str, ...]) ->
         test_case.assertFalse(ret.failed)
 
 
-# class TestDirect(TestCase):
-#     def runTest(self):  # type: () -> None
-#         paths = (
-#             'tests/usage/direct1.txt',
-#             'tests/usage/direct2.txt',
-#         )
-#         run_doctest_files(self, paths)
+class TestDirect(TestCase):
+    def runTest(self):  # type: () -> None
+        paths = (
+            'tests/usage/direct1.txt',
+            'tests/usage/direct2.txt',
+        )
+        run_doctest_files(self, paths)
 
 
 class TestParam(TestCase):

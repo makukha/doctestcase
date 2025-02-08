@@ -1,17 +1,15 @@
-from doctest import (
-    DocTestFinder,
-    DocTestParser,
-    DocTestRunner,
-    ELLIPSIS,
-    Example,
-    FAIL_FAST,
-)
+from doctest import DocTestFinder, DocTestRunner, ELLIPSIS, FAIL_FAST
 import re
-from typing import Any, ClassVar
 from unittest import TestCase
 
 
-_RX_DOCSTRING = re.compile(r'^(?P<title>.+?)(?:\n\n+(?P<body>.*?))?$', re.DOTALL)
+_R_BLANK = r'\n[ \t]*$'
+_RX_DOCSTRING = re.compile(rf'''
+    (?P<title>.+?)
+    ((?:{_R_BLANK})+\n(?P<body>.*?))?
+    ''',
+    flags=re.DOTALL | re.MULTILINE | re.VERBOSE,
+)
 
 
 class DocTestCase(TestCase):
@@ -26,6 +24,8 @@ class DocTestCase(TestCase):
     The class can also be given optional arguments.
 
     Args:
+        fail (bool):
+            test case is expected to fail; defaults to ``False``.
         globs (dict[str, Any]):
             dictionary of globals added to doctest global namespace, passed to
             :py:meth:`doctest.DocTestFinder.find`.
@@ -33,7 +33,7 @@ class DocTestCase(TestCase):
             `doctest` ``optionflags``, passed to `doctest.DocTestRunner` defaults to
             ``ELLIPSIS | FAIL_FAST``.
 
-    >>> class CustomTest(DocTestCase, globs={'x': 'yz'}, opts=doctest.ELLIPSIS):
+    >>> class CustomTest(DocTestCase, globs={'x': 'yz'}, opts=ELLIPSIS):
     ...     '''Title
     ...
     ...     >>> x * 100
@@ -43,12 +43,11 @@ class DocTestCase(TestCase):
     See also examples in :ref:`usage` section.
     """
 
-    globs: ClassVar[dict[str, Any]]
-    opts: ClassVar[int]
     __test__ = False  # don't run tests on this abstract base class
 
-    def __init_subclass__(cls, globs=None, opts=ELLIPSIS | FAIL_FAST):
+    def __init_subclass__(cls, fails=False, globs=None, opts=ELLIPSIS | FAIL_FAST):
         cls.__test__ = True
+        cls.fails = fails
         cls.globs = globs or {}
         cls.opts = opts
 
@@ -59,7 +58,7 @@ class DocTestCase(TestCase):
             name = self.__class__.__name__
             for test in finder.find(self.__doc__, name, globs=self.globs):
                 ret = runner.run(test)
-                self.assertFalse(ret.failed)
+                self.assertEqual(self.fails, ret.failed)
 
     @classmethod
     def to_markdown(cls, title_depth=1):
@@ -99,24 +98,23 @@ class DocTestCase(TestCase):
             'yz...'
             ```
         """
-        title, body = cls._parts()
+        title, body = cls._get_title_body()
         if not title:
             return ''
 
         # format title
-        title = ' '.join((line.strip() for line in title.splitlines()))
-        lines = ['{} {}\n'.format('#' * title_depth, title)]
+        chunks = ['{} {}\n'.format('#' * title_depth, title)]
 
         # format body
-        for item in parse(body):
-            if isinstance(item, ExampleBlock):
-                lines.append('```pycon')
-                lines.extend(item)
-                lines.append('```')
-            else:
-                lines.append(item)
+        if body:
+            chunks.append('\n')
+            for item in parse(body):
+                if isinstance(item, ExampleBlock):
+                    chunks.extend(('```pycon\n', item, '```\n'))
+                else:
+                    chunks.append(item)
 
-        return '\n'.join(lines)
+        return ''.join(chunks)
 
     @classmethod
     def to_rest(cls, title_char='-'):
@@ -141,73 +139,71 @@ class DocTestCase(TestCase):
 
         For the example above,
 
-        >>> CustomTest.to_rest(title_char='~')
+        >>> CustomTest.to_rest(title_char='=')
 
         .. code:: restructuredtext
 
             Title
-            ~~~~~
+            =====
 
             >>> x * 100
             'yz...'
         """
-        title, body = cls._parts()
+        title, body = cls._get_title_body()
         if not title:
             return ''
 
         # format title
-        title = ' '.join((line.strip() for line in title.splitlines()))
-        lines = ['{}\n{}\n'.format(title, title_char * len(title))]
+        chunks = ['{}\n{}\n'.format(title, title_char * max(3, len(title)))]
 
         # append body
         if body:
-            lines.append(body)
+            chunks.extend(('\n', body))
 
-        return ''.join(lines)
+        return ''.join(chunks)
 
     @classmethod
-    def _parts(cls):
+    def _get_title_body(cls):
         # check missing or empty docstring
         doc = (cls.__doc__ or '').strip()
         if not doc:
             return None, None
         # parse title and body
-        if (match := _RX_DOCSTRING.match(doc)) is None:
-            return None, None
+        if (match := _RX_DOCSTRING.fullmatch(doc)) is None:
+            raise RuntimeError('unreachable')  # pragma: nocover
+
+        title = ' '.join((ln.strip() for ln in match.group('title').splitlines()))
         body = match.group('body')
-        return match.group('title'), body + '\n' if body else body
+        return title, body.strip() + '\n' if body else body
 
 
 # helpers
 
 
-class ExampleBlock(list):
+class ExampleBlock(str):
     """Marker type to represent lines of block of examples"""
 
 
+_EXBLOCK_RE = re.compile(r'''
+    # Example block consists of a PS1 line followed by non-blank line
+    #   or a series of blank lines followed by PS1 line.
+    ^(?= [ ]* >>> )  # starts with PS1 line
+    (?:
+       [ ]* >>> .*                       $  # PS1 line
+      |\n (?![ ]*$) .+                   $  # non-blank line
+      |(?: \n [ ]* $)+ (?= \n [ ]* >>> ) $  # blank lines followed by PS1 line
+    )*
+    \n
+    ''',
+    flags=re.MULTILINE | re.VERBOSE,
+)
+
+
 def parse(text):
-    lines = text.splitlines()
-    END = object()
-    items = DocTestParser().parse(text) + [END]
-    outln = -1  # index of the last line returned
-    exbeg = None  # index of the first line in the block of examples
-    exend = None  # first line of last example in the block
-    for item in items:
-        if isinstance(item, Example):
-            exend = item.lineno
-            if exbeg is None:  # new block of examples
-                exbeg = item.lineno
-                yield from lines[outln + 1 : exbeg - 1]  # yield preceding str lines
-                outln = exbeg - 1
-            else:
-                pass  # lines for this example will be returned when block is closed
-        else:
-            if exbeg is not None:  # close existing block of examples
-                try:
-                    exend = lines.index('', start=exend)  # blank line closes example
-                except ValueError:
-                    exend = len(lines)
-                yield ExampleBlock(lines[exbeg:exend])
-                outln = exend - 1
-            if item is not END:  # last technical token only triggered block closing
-                yield item
+    string = (text if text.endswith('\n') else text + '\n').expandtabs()
+    charno = 0
+    for m in _EXBLOCK_RE.finditer(string):
+        yield string[charno:m.start()]
+        yield ExampleBlock(string[m.start():m.end()])
+        charno = m.end()
+    yield string[charno:]
