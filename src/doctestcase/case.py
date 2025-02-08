@@ -1,6 +1,18 @@
-from doctest import DocTestFinder, DocTestRunner, ELLIPSIS, FAIL_FAST
+from doctest import (
+    DocTestFinder,
+    DocTestParser,
+    DocTestRunner,
+    ELLIPSIS,
+    Example,
+    FAIL_FAST,
+)
+from itertools import chain
+import re
 from typing import Any, ClassVar
 from unittest import TestCase
+
+
+_RX_DOCSTRING = re.compile(r'^(?P<title>.+?)(?:\n\n+(?P<body>.*?))?$', re.DOTALL)
 
 
 class DocTestCase(TestCase):
@@ -9,8 +21,8 @@ class DocTestCase(TestCase):
 
     When inherited from this class, user test case class should have docstring with
     one or more doctests. The first block of non-blank lines up to first
-    blank line will be treated as doc title when formatted with ``doc_md()`` or
-    ``doc_rst()``.
+    blank line will be treated as doc title when formatted with ``to_markdown()`` or
+    ``to_rest()``.
 
     The class can also be given optional arguments.
 
@@ -35,8 +47,8 @@ class DocTestCase(TestCase):
     globs: ClassVar[dict[str, Any]]
     opts: ClassVar[int]
 
-    def __init_subclass__(cls, globs, opts=ELLIPSIS | FAIL_FAST):
-        cls.globs = globs
+    def __init_subclass__(cls, globs=None, opts=ELLIPSIS | FAIL_FAST):
+        cls.globs = globs or {}
         cls.opts = opts
 
     def test0(self):
@@ -49,7 +61,7 @@ class DocTestCase(TestCase):
                 self.assertFalse(ret.failed)
 
     @classmethod
-    def doc_markdown(cls, title_depth=1):
+    def to_markdown(cls, title_depth=1):
         """
         Convert docstring to `Markdown <https://www.markdownguide.org>`_ formatted text.
 
@@ -75,7 +87,7 @@ class DocTestCase(TestCase):
 
         For the example above,
 
-        >>> CustomTest.doc_markdown(title_depth=2)
+        >>> CustomTest.to_markdown(title_depth=2)
 
         .. code:: markdown
 
@@ -86,12 +98,35 @@ class DocTestCase(TestCase):
             'yz...'
             ```
         """
-        if cls.__doc__ == DocTestCase.__doc__:
+        title, body = cls._parts()
+        if not title:
             return ''
-        return cls.__doc__
+
+        # format title
+        title = ' '.join((line.strip() for line in title.splitlines()))
+        lines = ['{} {}\n'.format('#' * title_depth, title)]
+
+        # format body
+        if body:
+            block = []
+            for item in chain(DocTestParser().parse(body), ('')):  # '' closes block
+                if isinstance(item, Example):
+                    if not block:  # open doctest block
+                        block.append('```pycon\n')
+                    block.append(item.source)
+                else:
+                    if block:  # close doctest block if any
+                        block.append(item)
+                        lines.extend(block)
+                        lines.append('```\n')
+                        block = []
+                    lines.append(item)  # append interleaving text
+
+        return ''.join(lines)
+
 
     @classmethod
-    def doc_rest(cls, title_char='-'):
+    def to_rest(cls, title_char='-'):
         """
         Convert docstring to
         `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext>`_
@@ -113,7 +148,7 @@ class DocTestCase(TestCase):
 
         For the example above,
 
-        >>> CustomTest.doc_rest(title_char='~')
+        >>> CustomTest.to_rest(title_char='~')
 
         .. code:: restructuredtext
 
@@ -123,6 +158,29 @@ class DocTestCase(TestCase):
             >>> x * 100
             'yz...'
         """
-        if cls.__doc__ == DocTestCase.__doc__:
+        title, body = cls._parts()
+        if not title:
             return ''
-        return cls.__doc__
+
+        # format title
+        title = ' '.join((line.strip() for line in title.splitlines()))
+        lines = ['{}\n{}\n'.format(title, title_char * len(title))]
+
+        # append body
+        if body:
+            lines.append(body)
+
+        return ''.join(lines)
+
+    @classmethod
+    def _parts(cls):
+        # check missing or empty docstring
+        if cls.__doc__ == DocTestCase.__doc__:
+            return None, None
+        doc = cls.__doc__.strip() + '\n'
+        if not doc:
+            return None, None
+        # parse title and body
+        if (match := _RX_DOCSTRING.match(doc)) is None:
+            return None, None
+        return match.group('title'), match.group('body')

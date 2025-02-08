@@ -1,4 +1,4 @@
->>> T1.doc_markdown()
+>>> T1.to_markdown()
 # Use case title
 
 Optional paragraphs describing the use case.

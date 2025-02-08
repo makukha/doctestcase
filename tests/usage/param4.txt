@@ -1,4 +1,4 @@
->>> T1.doc_rst()
+>>> T1.to_rest()
 Use case title
 ==============
 

@@ -1,4 +1,4 @@
->>> T1.doc_md()
+>>> T1.to_markdown()
 # Multiline title
 
 ```pycon
