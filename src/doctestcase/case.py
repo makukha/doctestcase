@@ -31,14 +31,15 @@ class DocTestCase(TestCase):
 
     See also examples in :ref:`usage` section.
     """
+
     globs: ClassVar[dict[str, Any]]
     opts: ClassVar[int]
 
-    def __init_subclass__(cls, globs: dict[str, Any], opts: int = ELLIPSIS | FAIL_FAST) -> None:
+    def __init_subclass__(cls, globs, opts=ELLIPSIS | FAIL_FAST):
         cls.globs = globs
         cls.opts = opts
 
-    def test0(self) -> None:
+    def test0(self):
         finder = DocTestFinder(recurse=False)
         runner = DocTestRunner(optionflags=self.opts)
         if getattr(self, '__doc__', ''):
@@ -48,7 +49,7 @@ class DocTestCase(TestCase):
                 self.assertFalse(ret.failed)
 
     @classmethod
-    def doc_markdown(cls, title_depth: int = 1) -> str:
+    def doc_markdown(cls, title_depth=1):
         """
         Convert docstring to `Markdown <https://www.markdownguide.org>`_ formatted text.
 
@@ -89,9 +90,8 @@ class DocTestCase(TestCase):
             return ''
         return cls.__doc__
 
-
     @classmethod
-    def doc_rest(cls, title_char: str = '-') -> str:
+    def doc_rest(cls, title_char='-'):
         """
         Convert docstring to
         `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext>`_
