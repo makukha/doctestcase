@@ -16,6 +16,7 @@ exec(open('tests/usage/inherit.py').read())
 exec(open('tests/usage/param-base.py').read())
 exec(open('tests/usage/param-child.py').read())
 
+
 # use_case: format
 class FormatTest(TestCase):
     def test_markdown(self):

@@ -1,7 +1,6 @@
 from collections.abc import Iterable
 from typing import Optional, Tuple, Union
 
-
 def to_markdown(
     item: Union[object, str, None],
     title_depth: Optional[int] = ...,
@@ -10,7 +9,6 @@ def to_rest(
     item: Union[object, str, None],
     title_char: Optional[str] = ...,
 ) -> str: ...
-
 
 class ExampleBlock(list[str]): ...
 

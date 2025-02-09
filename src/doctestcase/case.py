@@ -72,6 +72,7 @@ class doctestcase:
     See Also:
          More examples in :ref:`usage` documentation section.
     """
+
     def __init__(self, globals=None, options=0, **kwargs):
         self.globals = globals or {}
         self.options = options
