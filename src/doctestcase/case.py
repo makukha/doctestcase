@@ -1,211 +1,104 @@
-from doctest import DocTestFinder, DocTestRunner, ELLIPSIS, FAIL_FAST
-import re
-from unittest import TestCase
+from doctest import DocTestFinder, DocTestRunner
 
 
-_R_BLANK = r'\n[ \t]*$'
-_RX_DOCSTRING = re.compile(
-    rf"""
-    (?P<title>.+?)
-    ((?:{_R_BLANK})+\n(?P<body>.*?))?
-    """,
-    flags=re.DOTALL | re.MULTILINE | re.VERBOSE,
-)
-
-
-class DocTestCase(TestCase):
+class doctestcase:
     """
-    Base class for user test cases.
+    Class decorator that adds docstring doctests evaluation to subclasses of
+    `unittest.TestCase`.
 
-    When inherited from this class, user test case class should have docstring with
-    one or more doctests. The first block of non-blank lines up to first
-    blank line will be treated as doc title when formatted with ``to_markdown()`` or
-    ``to_rest()``.
+    Arguments passed to decorator are stored under decorated class attribute
+    ``__doctestcase__``. New test method ``test_docstring``, implementing docstring
+    evaluation, is added to the decorated class.
 
-    The class can also be given optional arguments.
+    The decorator can be equally used with and without arguments. If used without
+    arguments, default values are used.
+
+    If the decorated class has no docstring or the docstring is blank, it is not
+    executed. The decorated class, as a subclass of `unittest.TestCase`, can define
+    its own test methods (exept ``test_docstring``) and
+    :py:meth:`~unittest.TestCase.setUp` / `~unittest.TestCase.tearDown` fixture
+    methods that are executed before or after the docstring.
 
     Args:
-        fail (bool):
-            test case is expected to fail; defaults to ``False``.
-        globs (dict[str, Any]):
-            dictionary of globals added to doctest global namespace, passed to
-            :py:meth:`doctest.DocTestFinder.find`.
-        opts (int):
-            `doctest` ``optionflags``, passed to `doctest.DocTestRunner` defaults to
-            ``ELLIPSIS | FAIL_FAST``.
+        globals (`dict` | `None`):
+            dictionary of globals passed to the doctest; defaults to ``None``
+            (no additional globals). If decorated class already has `__doctestcase__`
+            attribute, `__doctestcase__.globals` dict is shallow-copied and updated
+            with new ``globals``.
+        options (`int`):
+            `doctest` ``optionflags``, passed to `doctest.DocTestRunner`; defaults to
+            no options. If decorated class already has `__doctestcase__` attribute,
+            `__doctestcase__.options` value remains unchanged if ``options=0`` and
+            is replaced with new ``options`` otherwise.
+        kwargs (`dict`):
+            additional keyword arguments that will be stored under
+            ``__doctestcase__.kwargs`` and available to
+            :py:meth:`~unittest.TestCase.setUp`/:py:meth:`~unittest.TestCase.tearDown`
+            and other `~unittest.TestCase` methods, e.g. custom tests.
+            If decorated class already has `__doctestcase__` attribute,
+            `__doctestcase__.kwargs` dict is shallow-copied and updated with new
+            ``kwargs``.
 
-    >>> class CustomTest(DocTestCase, globs={'x': 'yz'}, opts=ELLIPSIS):
-    ...     '''Title
-    ...
-    ...     >>> x * 100
-    ...     'yz...'
-    ...     '''
+    Returns:
+        decorated class.
 
-    See also examples in :ref:`usage` section.
+    Example:
+
+        .. code:: python
+
+            from doctest import ELLIPSIS
+            from unittest import TestCase
+
+            from doctestcase import doctestcase
+
+
+            @doctestcase(globals=dict(X='yz'), options=ELLIPSIS)
+            class SimpleCase(TestCase):
+                \"\"\"
+                Title
+
+                Paragraph.
+
+                >>> X * 100
+                'yzyz...'
+
+                Another paragraph.
+
+                >>> None
+                >>> True
+                True
+                \"\"\"
+
+    See Also:
+         More examples in :ref:`usage` documentation section.
     """
+    def __init__(self, globals=None, options=0, **kwargs):
+        self.globals = globals or {}
+        self.options = options
+        self.kwargs = kwargs
 
-    __test__ = False  # don't run tests on this abstract base class
+    def __call__(self, cls):
+        if hasattr(cls, '__doctestcase__'):
+            old = cls.__doctestcase__
+            if self.globals:
+                self.globals = {**old.globals, **self.globals}
+            self.options = old.options if self.options == 0 else self.options
+            if self.kwargs:
+                self.kwargs = {**old.kwargs, **self.kwargs}
+        cls.__doctestcase__ = self
 
-    def __init_subclass__(cls, fails=False, globs=None, opts=ELLIPSIS | FAIL_FAST):
-        cls.__test__ = True
-        cls.fails = fails
-        cls.globs = globs or {}
-        cls.opts = opts
+        if not hasattr(cls, 'test_docstring'):
+            cls.test_docstring = test_docstring
 
-    def test0(self):
-        finder = DocTestFinder(recurse=False)
-        runner = DocTestRunner(optionflags=self.opts)
-        if getattr(self, '__doc__', ''):
-            name = self.__class__.__name__
-            for test in finder.find(self.__doc__, name, globs=self.globs):
-                ret = runner.run(test)
-                self.assertEqual(self.fails, ret.failed)
-
-    @classmethod
-    def to_markdown(cls, title_depth=1):
-        """
-        Convert docstring to `Markdown <https://www.markdownguide.org>`_ formatted text.
-
-        Args:
-            title_depth (int):
-                heading level for test case title; defaults to ``1``.
-
-        Returns:
-            str: Markdown formatted text; may be empty.
-
-        The first block of non-blank lines up to first blank line represents test case
-        title. It is merged into one line and formatted as section heading.
-
-        Every doctest block is enclosed with fenced code block
-
-        .. code:: markdown
-
-            ```pycon
-            >>> ...
-            ```
-
-        If there is no docstring, empty string is returned.
-
-        For the example above,
-
-        >>> CustomTest.to_markdown(title_depth=2)
-
-        .. code:: markdown
-
-            ## Title
-
-            ```pycon
-            >>> x * 100
-            'yz...'
-            ```
-        """
-        title, body = cls._get_title_body()
-        if not title:
-            return ''
-
-        # format title
-        chunks = ['{} {}\n'.format('#' * title_depth, title)]
-
-        # format body
-        if body:
-            chunks.append('\n')
-            for item in parse(body):
-                if isinstance(item, ExampleBlock):
-                    chunks.extend(('```pycon\n', item, '```\n'))
-                else:
-                    chunks.append(item)
-
-        return ''.join(chunks)
-
-    @classmethod
-    def to_rest(cls, title_char='-'):
-        """
-        Convert docstring to
-        `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext>`_
-        formatted text.
-
-        Args:
-            title_depth (int):
-                heading level for test case title; defaults to ``1``.
-
-        Returns:
-            str: Markdown formatted text; may be empty.
-
-        The first block of non-blank lines up to first blank line represents test case
-        title. It is merged into one line and formatted as section heading.
-
-        Every doctest block remains unmodified (a valid reST).
-
-        If there is no docstring, empty string is returned.
-
-        For the example above,
-
-        >>> CustomTest.to_rest(title_char='=')
-
-        .. code:: restructuredtext
-
-            Title
-            =====
-
-            >>> x * 100
-            'yz...'
-        """
-        title, body = cls._get_title_body()
-        if not title:
-            return ''
-
-        # format title
-        chunks = ['{}\n{}\n'.format(title, title_char * max(3, len(title)))]
-
-        # append body
-        if body:
-            chunks.extend(('\n', body))
-
-        return ''.join(chunks)
-
-    @classmethod
-    def _get_title_body(cls):
-        # check missing or empty docstring
-        doc = (cls.__doc__ or '').strip()
-        if not doc:
-            return None, None
-        # parse title and body
-        if (match := _RX_DOCSTRING.fullmatch(doc)) is None:
-            raise RuntimeError('unreachable')  # pragma: nocover
-
-        title = ' '.join((ln.strip() for ln in match.group('title').splitlines()))
-        body = match.group('body')
-        return title, body.strip() + '\n' if body else body
+        return cls
 
 
-# helpers
-
-
-class ExampleBlock(str):
-    """Marker type to represent lines of block of examples"""
-
-
-_EXBLOCK_RE = re.compile(
-    r"""
-    # Example block consists of a PS1 line followed by non-blank line
-    #   or a series of blank lines followed by PS1 line.
-    ^(?= [ ]* >>> )  # starts with PS1 line
-    (?:
-       [ ]* >>> .*                       $  # PS1 line
-      |\n (?![ ]*$) .+                   $  # non-blank line
-      |(?: \n [ ]* $)+ (?= \n [ ]* >>> ) $  # blank lines followed by PS1 line
-    )*
-    \n
-    """,
-    flags=re.MULTILINE | re.VERBOSE,
-)
-
-
-def parse(text):
-    string = (text if text.endswith('\n') else text + '\n').expandtabs()
-    charno = 0
-    for m in _EXBLOCK_RE.finditer(string):
-        yield string[charno : m.start()]
-        yield ExampleBlock(string[m.start() : m.end()])
-        charno = m.end()
-    yield string[charno:]
+def test_docstring(self):
+    props = self.__doctestcase__
+    finder = DocTestFinder(recurse=False)
+    runner = DocTestRunner(optionflags=props.options)
+    if getattr(self, '__doc__', ''):
+        name = self.__class__.__name__
+        for test in finder.find(self.__doc__, name, globs=props.globals):
+            ret = runner.run(test)
+            self.assertFalse(ret.failed)

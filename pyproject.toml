@@ -4,7 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "doctestcase"
-description = "Handy subclass of unittest.TestCase to manage doctests and generate usage docs"
+description = """\
+  Run doctests in docstring with custom globals and setUp/tearDown. \
+  Export to Markdown and reST to include in docs.\
+"""
 license = {text = "MIT"}
 readme = "README.md"
 urls.Documentation = "https://doctestcase.readthedocs.io"
@@ -43,9 +46,7 @@ classifiers = [
 dynamic = ["version"]
 
 requires-python = ">=2.7,!=3.0,!=3.1,!=3.2,!=3.3,!=3.4"
-dependencies = [
-    "typing-extensions>=4.12.2 ; python_version >= '3.8'",
-]
+dependencies = []
 
 [dependency-groups]
 dev = [
@@ -87,6 +88,7 @@ path = "src/doctestcase/__init__.py"
 [tool.mypy]
 python_version = "3.9"
 strict = true
+exclude = "tests/usage"
 [[tool.mypy.overrides]]
 module = "tests.*"
 allow_incomplete_defs = true
@@ -94,10 +96,14 @@ allow_untyped_defs = true
 
 # ruff
 
+[tool.ruff]
+exclude = ["tests/usage"]
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "B", "S"]
 per-file-ignores."tests/**/*.py" = [
   "S101",  # Use of `assert` detected
+  "S102",  # Use of `exec` detected
+  "S603",  # `subprocess` call: check for execution of untrusted input
 ]
 [tool.ruff.format]
 quote-style = "single"

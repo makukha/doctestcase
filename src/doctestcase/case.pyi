@@ -1,25 +1,26 @@
-from typing import Any, ClassVar, Iterable, Optional, Tuple, Union
+from typing import Any, ClassVar, Type, TypeVar, Union
 from unittest import TestCase
 
+
+T = TypeVar('T', bound=Type[TestCase])
+
+
 class DocTestCase(TestCase):
-    fails: ClassVar[bool]
-    globs: ClassVar[dict[str, Any]]
-    opts: ClassVar[int]
+    __doctestcase__: ClassVar['doctestcase']
+    def test_docstring(self) -> None: ...
 
-    def __init_subclass__(
-        cls,
-        fails: bool = ...,
-        globs: Optional[dict[str, Any]] = ...,
-        opts: int = ...,
-    ) -> None: ...
-    def test0(self) -> None: ...
-    @classmethod
-    def to_markdown(cls, title_depth: int = ...) -> str: ...
-    @classmethod
-    def to_rest(cls, title_char: str = ...) -> str: ...
-    @classmethod
-    def _get_title_body(cls) -> Tuple[Optional[str], Optional[str]]: ...
 
-class ExampleBlock(list[str]): ...
+class doctestcase:
+    globals: dict[str, Any]
+    options: int
+    kwargs: dict[str, Any]
+    def __init__(
+        self,
+        globals: dict[str, Any] = ...,
+        options: int = ...,
+        **kwargs: Any,
+    ) -> None:
+        ...
+    def __call__(owner: Union[T, type[T]], cls: T) -> Union[T, DocTestCase]: ...
 
-def parse(test: str) -> Iterable[Union[str, ExampleBlock]]: ...
+def test_docstring(self: TestCase) -> None: ...

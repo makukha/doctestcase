@@ -13,7 +13,7 @@ version := "$(uv run bump-my-version show current_version 2>/dev/null)"
 init:
     #!/usr/bin/env bash
     set -euo pipefail
-    sudo port install gh uv
+    sudo port install gh uv yq
     just sync
     # pre-commit hook
     echo -e "#!/usr/bin/env bash\njust pre-commit" > .git/hooks/pre-commit
@@ -100,6 +100,19 @@ gh-pr *title:
     git push
     # create pr
     gh pr create -d -t "{{ if title == "" { gh-title } else { title } }}"
+
+#
+#  Repository
+# -----------
+#
+# just gh-repo-desc
+#
+
+# update GitHub repository metadata from pyproject.toml
+[group('repo')]
+gh-repo:
+    gh repo edit -d "$(yq -r .project.description pyproject.toml)"
+    gh repo edit --add-topic "$(yq -r '.project.keywords | join(",")' -ojson pyproject.toml)"
 
 #
 #  Release
