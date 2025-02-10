@@ -96,8 +96,12 @@ class Formatting(TestCase):
 
     def test_doctest_with_blank_lines(self):
         t = '\n>>> None\n    \n>>> None\n'
-        self.assertEqual('```pycon\n>>> None\n    \n>>> None\n```\n', to_markdown(t))
-        self.assertEqual('>>> None\n    \n>>> None\n', to_rest(t))
+        # dedent
+        self.assertEqual('```pycon\n>>> None\n\n>>> None\n```\n', to_markdown(t))
+        self.assertEqual('>>> None\n\n>>> None\n', to_rest(t))
+        # no dedent
+        self.assertEqual('```pycon\n>>> None\n    \n>>> None\n```\n', to_markdown(t, dedent=False))
+        self.assertEqual('>>> None\n    \n>>> None\n', to_rest(t, dedent=False))
 
     def test_doctest_with_exception(self):
         exc = (

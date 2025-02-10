@@ -1,4 +1,5 @@
 import re
+import textwrap
 
 
 RX_DOCSTRING = re.compile(
@@ -24,7 +25,7 @@ RX_EXAMPLE_BLOCK = re.compile(
 )
 
 
-def to_markdown(item, title_depth=2):
+def to_markdown(item, title_depth=2, dedent=True):
     """
     Convert docstring to `Markdown <https://www.markdownguide.org>`_.
 
@@ -75,6 +76,8 @@ def to_markdown(item, title_depth=2):
     if item is None:
         return ''
     item = item if isinstance(item, str) else item.__doc__
+    if dedent:
+        item = textwrap.dedent(item)
 
     title, body = parse_title_body(item, parse_title=title_depth is not None)
     if (title, body) == (None, None):
@@ -96,7 +99,7 @@ def to_markdown(item, title_depth=2):
     return ''.join(chunks)
 
 
-def to_rest(item, title_char='-'):
+def to_rest(item, title_char='-', dedent=True):
     """
     Convert docstring to
     `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext>`_.
@@ -146,6 +149,8 @@ def to_rest(item, title_char='-'):
     if item is None:
         return ''
     item = item if isinstance(item, str) else item.__doc__
+    if dedent:
+        item = textwrap.dedent(item)
 
     title, body = parse_title_body(item, parse_title=title_char is not None)
     if (title, body) == (None, None):
