@@ -3,7 +3,7 @@ import re
 
 RX_DOCSTRING = re.compile(
     r"""
-    (?P<title>.+?)
+    (?P<title> (?!\s*>>> ) .+?)           # not PS1 line
     ( (?:\n[ \t]*$)+ \n (?P<body>.*?) )?
     """,
     flags=re.DOTALL | re.MULTILINE | re.VERBOSE,
@@ -75,18 +75,18 @@ def to_markdown(item, title_depth=2):
     if item is None:
         return ''
     item = item if isinstance(item, str) else item.__doc__
-    parse_title = title_depth is not None
 
-    title, body = parse_title_body(item, parse_title=parse_title)
+    title, body = parse_title_body(item, parse_title=title_depth is not None)
     if (title, body) == (None, None):
         return ''
 
     chunks = []
-    if parse_title:
+    if title is not None:
         chunks.append('{} {}\n'.format('#' * title_depth, title))
 
     if body:
-        chunks.append('\n')
+        if title is not None:
+            chunks.append('\n')
         for item in parse_body_items(body):
             if isinstance(item, ExampleBlock):
                 chunks.extend(('```pycon\n', item, '```\n'))
@@ -146,18 +146,19 @@ def to_rest(item, title_char='-'):
     if item is None:
         return ''
     item = item if isinstance(item, str) else item.__doc__
-    parse_title = title_char is not None
 
-    title, body = parse_title_body(item, parse_title=parse_title)
+    title, body = parse_title_body(item, parse_title=title_char is not None)
     if (title, body) == (None, None):
         return ''
 
     chunks = []
-    if parse_title:
+    if title is not None:
         chunks.append('{}\n{}\n'.format(title, title_char * max(3, len(title))))
 
     if body:
-        chunks.extend(('\n', body))
+        if title is not None:
+            chunks.append('\n')
+        chunks.append(body)
 
     return ''.join(chunks)
 
@@ -175,17 +176,20 @@ def parse_title_body(s, parse_title=True):
         return None, None
 
     if parse_title:
-        if (match := RX_DOCSTRING.fullmatch(doc)) is None:
-            raise RuntimeError('unreachable')  # pragma: nocover
-        title = ' '.join((t.strip() for t in match.group('title').splitlines()))
-        body = match.group('body')
+        if (match := RX_DOCSTRING.fullmatch(doc)) is not None:
+            title = ' '.join((t.strip() for t in match.group('title').splitlines()))
+            body = match.group('body')
+        else:
+            title = None
+            body = doc
     else:
         title = None
         body = doc
 
-    body = body.strip().expandtabs()
-    if body:
-        body += '\n'
+    if body is not None:
+        body = body.strip()
+        if body:  # pragma: nocover  # always true, but we don't rely on it
+            body += '\n'
 
     return title, body
 

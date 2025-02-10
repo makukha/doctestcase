@@ -6,41 +6,46 @@ class doctestcase:
     Class decorator that adds docstring doctests evaluation to subclasses of
     `unittest.TestCase`.
 
-    Arguments passed to decorator are stored under decorated class attribute
-    ``__doctestcase__``. New test method ``test_docstring``, implementing docstring
-    evaluation, is added to the decorated class.
-
-    The decorator can be equally used with and without arguments. If used without
-    arguments, default values are used.
-
-    If the decorated class has no docstring or the docstring is blank, it is not
-    executed. The decorated class, as a subclass of `unittest.TestCase`, can define
-    its own test methods (exept ``test_docstring``) and
-    :py:meth:`~unittest.TestCase.setUp` / `~unittest.TestCase.tearDown` fixture
-    methods that are executed before or after the docstring.
-
     Args:
         globals (`dict` | `None`):
             dictionary of globals passed to the doctest; defaults to ``None``
             (no additional globals). If decorated class already has `__doctestcase__`
-            attribute, `__doctestcase__.globals` dict is shallow-copied and updated
-            with new ``globals``.
+            attribute, `__doctestcase__.globals` dict is updated with new ``globals``.
         options (`int`):
             `doctest` ``optionflags``, passed to `doctest.DocTestRunner`; defaults to
             no options. If decorated class already has `__doctestcase__` attribute,
-            `__doctestcase__.options` value remains unchanged if ``options=0`` and
-            is replaced with new ``options`` otherwise.
+            `__doctestcase__.options` value is updated (OR-ed) with new ``options``.
         kwargs (`dict`):
             additional keyword arguments that will be stored under
             ``__doctestcase__.kwargs`` and available to
             :py:meth:`~unittest.TestCase.setUp`/:py:meth:`~unittest.TestCase.tearDown`
             and other `~unittest.TestCase` methods, e.g. custom tests.
             If decorated class already has `__doctestcase__` attribute,
-            `__doctestcase__.kwargs` dict is shallow-copied and updated with new
-            ``kwargs``.
+            `__doctestcase__.kwargs` dict is updated with new ``kwargs``.
 
-    Returns:
-        decorated class.
+    Arguments passed to decorator are stored under decorated class attribute
+    ``__doctestcase__``. New test method ``test_docstring``, implementing docstring
+    evaluation, is added to the decorated class.
+
+    The `__doctestcase__` attribute as a copy of original decorator and contains
+    shallow copies of original `globals` and `kwargs`.
+
+    If the decorated class has no docstring or the docstring is blank, it is not
+    executed. The decorated class, as a subclass of `unittest.TestCase`, can define
+    :py:meth:`~unittest.TestCase.setUp` / `~unittest.TestCase.tearDown`
+    and its own test methods (exept ``test_docstring``) that are executed
+    before or after the docstring.
+
+    The doctestcase object, after being applied to `~unittest.TestCase` class,
+    can be further reused to decorate other `~unittest.TestCase` classes. The same
+    is true for `__doctestcase__` attribute. On every decoration, a copy of it is
+    assigned to `__doctestcase__` attribute of the decorated class.
+
+    When `~unittest.TestCase` is inherited, the inherited class must be decorated
+    with `@doctestcase()` again.
+
+    This ensures that `__doctestcase__` attributes of subsequent classes are
+    independent, but values of `globals` and `kwargs` remain the same objects.
 
     Example:
 
@@ -77,24 +82,44 @@ class doctestcase:
         self.globals = globals or {}
         self.options = options
         self.kwargs = kwargs
+        self.bind = None
 
     def __call__(self, cls):
-        if hasattr(cls, '__doctestcase__'):
-            old = cls.__doctestcase__
-            if self.globals:
-                self.globals = {**old.globals, **self.globals}
-            self.options = old.options if self.options == 0 else self.options
-            if self.kwargs:
-                self.kwargs = {**old.kwargs, **self.kwargs}
-        cls.__doctestcase__ = self
-
-        if not hasattr(cls, 'test_docstring'):
-            cls.test_docstring = test_docstring
-
+        if not hasattr(cls, '__doctestcase__'):
+            self._assign(cls)
+        elif cls.__doctestcase__.bind is not cls:
+            updated = cls.__doctestcase__._copy()
+            updated._update(self)
+            updated._assign(cls)
+        else:
+            cls.__doctestcase__._update(self)
         return cls
+
+    def _assign(self, cls):
+        cls.__doctestcase__ = self._copy()
+        cls.__doctestcase__.bind = cls
+        cls.test_docstring = test_docstring
+
+    def _copy(self):
+        return self.__class__(
+            globals=self.globals.copy(),
+            options=self.options,
+            **self.kwargs,
+        )
+
+    def _update(self, other):
+        self.globals |= other.globals
+        self.options |= other.options
+        self.kwargs |= other.kwargs
 
 
 def test_docstring(self):
+    if self.__doctestcase__.bind is not self.__class__:
+        errmsg = 'Class {}, inherited from {}, must be decorated'.format(
+            self.__class__.__name__, self.__doctestcase__.bind.__name__,
+        )
+        raise ValueError(errmsg)
+
     props = self.__doctestcase__
     finder = DocTestFinder(recurse=False)
     runner = DocTestRunner(optionflags=props.options)
