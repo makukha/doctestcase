@@ -16,7 +16,8 @@ class DocsubTest(TestCase):
         os.chdir(self.prev)
 
     def test_docsub(self):
-        expected = open('__result__.md').read()
+        with open('__result__.md') as f:
+            expected = f.read()
         result = check_output(
             [sys.executable, '-m', 'docsub', 'apply', '__input__.md'],
             text=True,

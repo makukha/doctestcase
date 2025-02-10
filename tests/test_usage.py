@@ -7,22 +7,28 @@ from doctestcase import doctestcase, to_markdown, to_rest  # noqa: F401 # used i
 from .usage.simple import SimpleCase
 
 # use case: reuse
-exec(open('tests/usage/reuse.py').read())
+with open('tests/usage/reuse.py') as f:
+    exec(f.read())
 
 # use case: inherit
-exec(open('tests/usage/inherit.py').read())
+with open('tests/usage/inherit.py') as f:
+    exec(f.read())
 
 # use case: param
-exec(open('tests/usage/param-base.py').read())
-exec(open('tests/usage/param-child.py').read())
+with open('tests/usage/param-base.py') as f:
+    exec(f.read())
+with open('tests/usage/param-child.py') as f:
+    exec(f.read())
 
 
 # use_case: format
 class FormatTest(TestCase):
     def test_markdown(self):
-        expected = open('tests/usage/simple.md').read()
+        with open('tests/usage/simple.md') as f:
+            expected = f.read()
         self.assertEqual(expected, to_markdown(SimpleCase))
 
     def test_rest(self):
-        expected = open('tests/usage/simple.rst').read()
+        with open('tests/usage/simple.rst') as f:
+            expected = f.read()
         self.assertEqual(expected, to_rest(SimpleCase))
