@@ -15,6 +15,7 @@ deco2 = doctestcase(globals=dict(obj2a=obj2a), options=FAIL_FAST, obj2b=obj2b)
 
 # tests
 
+
 class TestReusability(TestCase):
     def test_decoration(self):
         @deco1
@@ -86,7 +87,6 @@ class TestReusability(TestCase):
         errmsg = r'Class Child, inherited from Base, must be decorated'
         assertError(self, Child, errmsg)
 
-
     def test_unaltered_inheritance(self):
         @deco1
         class Base(TestCase):
@@ -100,7 +100,6 @@ class TestReusability(TestCase):
         assertCopy(self, Base.__doctestcase__, Child.__doctestcase__)  # type: ignore
         assertPass(self, Base)
         assertPass(self, Child)
-
 
     def test_altered_inheritance(self):
         @deco1
@@ -130,7 +129,12 @@ class TestReusability(TestCase):
 
         assertIndepend(self, Base1.__doctestcase__, Child.__doctestcase__)  # type: ignore
         assertIndepend(self, Base2.__doctestcase__, Child.__doctestcase__)  # type: ignore
-        assertExtended(self, Base2.__doctestcase__, Base1.__doctestcase__, Child.__doctestcase__)  # type: ignore
+        assertExtended(
+            self,
+            Base2.__doctestcase__,  # type: ignore
+            Base1.__doctestcase__,  # type: ignore
+            Child.__doctestcase__,  # type: ignore
+        )
         assertPass(self, Base1)
         assertPass(self, Base2)
         assertPass(self, Child)

@@ -116,7 +116,8 @@ class doctestcase:
 def test_docstring(self):
     if self.__doctestcase__.bind is not self.__class__:
         errmsg = 'Class {}, inherited from {}, must be decorated'.format(
-            self.__class__.__name__, self.__doctestcase__.bind.__name__,
+            self.__class__.__name__,
+            self.__doctestcase__.bind.__name__,
         )
         raise ValueError(errmsg)
 

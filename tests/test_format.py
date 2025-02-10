@@ -16,7 +16,6 @@ class Formatting(TestCase):
         self.assertEqual('', to_markdown(' \t\n \n'))
         self.assertEqual('', to_rest(' \t\n \n'))
 
-
     # title
 
     def test_no_title(self):
@@ -63,21 +62,17 @@ class Formatting(TestCase):
         self.assertEqual('## T\n', to_markdown(t))
         self.assertEqual('T\n---\n', to_rest(t))
 
-
     # title with text
-
 
     def test_title_with_text_without_trailing_newline(self):
         t = '\nTitle\n\nText.\n'
         self.assertEqual('## Title\n\nText.\n', to_markdown(t))
         self.assertEqual('Title\n-----\n\nText.\n', to_rest(t))
 
-
     def test_title_with_text_with_multiple_trailing_newlines(self):
         t = '\nTitle\n\nText.\n\n'
         self.assertEqual('## Title\n\nText.\n', to_markdown(t))
         self.assertEqual('Title\n-----\n\nText.\n', to_rest(t))
-
 
     def test_title_with_many_lines_to_text(self):
         t = '\nTitle\n\n\nText.'
@@ -88,7 +83,6 @@ class Formatting(TestCase):
         t = '\nTitle\n    \nText.'
         self.assertEqual('## Title\n\nText.\n', to_markdown(t))
         self.assertEqual('Title\n-----\n\nText.\n', to_rest(t))
-
 
     # doctests
 
@@ -111,20 +105,12 @@ class Formatting(TestCase):
             '    ...\n'
             'ZeroDivisionError: division by zero\n'
         )
-        t = (
-            '\nTitle\n\nText1\n\n>>> 0 / 0\n'
-            + exc +
-            '\nText2\n'
-        )
+        t = '\nTitle\n\nText1\n\n>>> 0 / 0\n' + exc + '\nText2\n'
         self.assertEqual(
-            '## Title\n\nText1\n\n```pycon\n>>> 0 / 0\n'
-            + exc +
-            '```\n\nText2\n',
+            '## Title\n\nText1\n\n```pycon\n>>> 0 / 0\n' + exc + '```\n\nText2\n',
             to_markdown(t),
         )
         self.assertEqual(
-            'Title\n-----\n\nText1\n\n>>> 0 / 0\n'
-            + exc +
-            '\nText2\n',
+            'Title\n-----\n\nText1\n\n>>> 0 / 0\n' + exc + '\nText2\n',
             to_rest(t),
         )
