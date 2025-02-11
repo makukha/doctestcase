@@ -5,8 +5,8 @@ build-backend = "hatchling.build"
 [project]
 name = "doctestcase"
 description = """\
-  Run doctests in docstring with custom globals and setUp/tearDown. \
-  Export to Markdown and reST to include in docs.\
+  Decorate `unittest.TestCase` to evaluate doctests with configurable globals \
+  and `setUp`/`tearDown`. Export to Markdown and reST to include in docs.\
 """
 license = {text = "MIT"}
 readme = "README.md"
@@ -80,6 +80,12 @@ files = [
 
 # hatch
 
+[tool.hatch.build]
+exclude = [
+  "Justfile",
+  "Makefile",
+  "compose.yml",
+]
 [tool.hatch.version]
 path = "src/doctestcase/__init__.py"
 

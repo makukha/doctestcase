@@ -1,6 +1,1 @@
-* `doctest.DocTestSuite` — but individual docstring cannot be easily extended, parametrized, and have declarative `setUp`/`tearDown` handlers.
-
-### PyPI
-
-_(to be researched)_
-
+* `doctest.DocTestSuite` allows to run doctests with `unittest`, but individual doctests can't be extended, parametrized, or enclose with `setUp`/`tearDown`.

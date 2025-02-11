@@ -67,13 +67,6 @@ shell:
 docs:
     make docs
 
-#
-#  Commit
-# --------
-#
-# just pre-commit
-#
-
 # run pre-commit hook
 [group('commit')]
 pre-commit: lint docs

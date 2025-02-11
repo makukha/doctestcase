@@ -1,1 +1,1 @@
-> Handy subclass of unittest.TestCase to manage doctests and generate usage docs.
+> Decorate `unittest.TestCase` to evaluate doctests with configurable globals and `setUp`/`tearDown`. Format as Markdown and reST to include in docs.
