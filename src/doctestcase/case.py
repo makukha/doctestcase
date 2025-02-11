@@ -101,16 +101,16 @@ class doctestcase:
         cls.test_docstring = test_docstring
 
     def _copy(self):
-        return self.__class__(
+        return doctestcase(
             globals=self.globals.copy(),
             options=self.options,
-            **self.kwargs,
+            **self.kwargs
         )
 
     def _update(self, other):
-        self.globals |= other.globals
+        self.globals.update(other.globals)
         self.options |= other.options
-        self.kwargs |= other.kwargs
+        self.kwargs.update(other.kwargs)
 
 
 def test_docstring(self):

@@ -4,7 +4,7 @@ from doctestcase import doctestcase, to_markdown, to_rest  # noqa: F401 # used i
 
 
 # use case: simple
-from .usage.simple import SimpleCase
+from tests.usage.simple import SimpleCase
 
 # use case: reuse
 with open('tests/usage/reuse.py') as f:

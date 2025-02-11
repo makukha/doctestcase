@@ -19,7 +19,7 @@ class DocsubTest(TestCase):
         with open('__result__.md') as f:
             expected = f.read()
         result = check_output(
-            [sys.executable, '-m', 'docsub', 'apply', '__input__.md'],
+            [sys.executable, '-m', 'docsub', 'sync', '__input__.md'],
             text=True,
         )
         self.assertEqual(expected, result)

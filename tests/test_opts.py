@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from doctestcase import doctestcase
 
-from .util import assertFail, assertPass
+from tests.util import assertFail, assertPass
 
 
 class DefaultOptions(TestCase):

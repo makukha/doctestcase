@@ -3,10 +3,10 @@ import textwrap
 
 
 RX_DOCSTRING = re.compile(
-    r"""
+    r"""\A
     (?P<title> (?!\s*>>> ) .+?)           # not PS1 line
     ( (?:\n[ \t]*$)+ \n (?P<body>.*?) )?
-    """,
+    \Z""",
     flags=re.DOTALL | re.MULTILINE | re.VERBOSE,
 )
 RX_EXAMPLE_BLOCK = re.compile(
@@ -181,7 +181,8 @@ def parse_title_body(s, parse_title=True):
         return None, None
 
     if parse_title:
-        if (match := RX_DOCSTRING.fullmatch(doc)) is not None:
+        match = RX_DOCSTRING.match(doc)
+        if match is not None:
             title = ' '.join((t.strip() for t in match.group('title').splitlines()))
             body = match.group('body')
         else:

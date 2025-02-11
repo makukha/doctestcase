@@ -33,10 +33,10 @@ docs/_static/badge-tests.svg: .tmp/junit.xml
 	uv run genbadge tests --local -i $< -o $@
 
 docs/usage.md: FORCE
-	uv run docsub apply -i $@
+	uv run docsub sync -i $@
 
 README.md: docs/usage.md FORCE
-	uv run docsub apply -i $@
+	uv run docsub sync -i $@
 
 
 FORCE:

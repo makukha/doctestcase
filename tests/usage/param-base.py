@@ -1,4 +1,4 @@
-from doctest import ELLIPSIS, FAIL_FAST
+from doctest import ELLIPSIS
 import os.path
 import shutil
 import tempfile
@@ -8,7 +8,7 @@ from doctestcase import doctestcase
 
 
 @skip('base class')
-@doctestcase(options=ELLIPSIS | FAIL_FAST, cwd='.')
+@doctestcase(options=ELLIPSIS, cwd='.')
 class ChdirTestCase(TestCase):
     def setUp(self):
         self.temp = tempfile.mkdtemp()

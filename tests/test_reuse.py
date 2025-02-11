@@ -1,16 +1,16 @@
-from doctest import ELLIPSIS, FAIL_FAST
+from doctest import ELLIPSIS, REPORT_UDIFF
 from unittest import TestCase
 
 from doctestcase import doctestcase
 
-from .util import assertCopy, assertError, assertExtended, assertIndepend, assertPass
+from tests.util import assertCopy, assertError, assertExtended, assertIndepend, assertPass
 
 
 obj1a, obj1b = object(), object()
 deco1 = doctestcase(globals=dict(obj1a=obj1a), options=ELLIPSIS, obj1b=obj1b)
 
 obj2a, obj2b = object(), object()
-deco2 = doctestcase(globals=dict(obj2a=obj2a), options=FAIL_FAST, obj2b=obj2b)
+deco2 = doctestcase(globals=dict(obj2a=obj2a), options=REPORT_UDIFF, obj2b=obj2b)
 
 
 # tests
@@ -41,19 +41,22 @@ class TestReusability(TestCase):
 
     def test_missing_docstring(self):
         @deco1
-        class Decorated(TestCase): ...
+        class Decorated(TestCase):
+            pass
 
         assertPass(self, Decorated)
 
     def test_empty_docstring(self):
         @deco1
-        class Decorated(TestCase): ...
+        class Decorated(TestCase):
+            pass
 
         assertPass(self, Decorated)
 
     def test_blank_docstring(self):
         @deco1
-        class Decorated(TestCase): ...
+        class Decorated(TestCase):
+            pass
 
         assertPass(self, Decorated)
 
