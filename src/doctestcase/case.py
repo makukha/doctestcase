@@ -114,7 +114,7 @@ class doctestcase:
         return doctestcase(
             globals=self.globals.copy(),
             options=self.options,
-            **self.kwargs
+            **self.kwargs,
         )
 
     def _update(self, other):

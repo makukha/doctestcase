@@ -3,7 +3,13 @@ from unittest import TestCase
 
 from doctestcase import doctestcase
 
-from tests.util import assertCopy, assertError, assertExtended, assertIndepend, assertPass
+from tests.util import (
+    assertCopy,
+    assertError,
+    assertExtended,
+    assertIndepend,
+    assertPass,
+)
 
 
 obj1a, obj1b = object(), object()
