@@ -1,5 +1,5 @@
 * Evaluate doctests
-* Configure doctest globals and `setUp`/`tearDown`
+* Configure doctest globals and `setUp`–`tearDown`
 * Relies on `unittest.TestCase`
 * Minimalistic decorator-based API
 * Format docstring as Markdown and reST to include in docs
