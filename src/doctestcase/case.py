@@ -3,49 +3,59 @@ from doctest import DocTestFinder, DocTestRunner
 
 class doctestcase:
     """
-    Class decorator that adds docstring doctests evaluation to subclasses of
+    Class decorator that turns on evaluation of docstring doctests in subclasses of
     `unittest.TestCase`.
 
     Args:
         globals (`dict` | `None`):
             dictionary of globals passed to the doctest; defaults to ``None``
-            (no additional globals). If decorated class already has `__doctestcase__`
-            attribute, `__doctestcase__.globals` dict is updated with new ``globals``.
+            (no additional globals).
         options (`int`):
-            `doctest` ``optionflags``, passed to `doctest.DocTestRunner`; defaults to
-            no options. If decorated class already has `__doctestcase__` attribute,
-            `__doctestcase__.options` value is updated (OR-ed) with new ``options``.
+            `doctest` options, passed to `doctest.DocTestRunner`; defaults to
+            ``0`` (no options).
         kwargs (`dict`):
             additional keyword arguments that will be stored under
-            ``__doctestcase__.kwargs`` and available to
-            :py:meth:`~unittest.TestCase.setUp`/:py:meth:`~unittest.TestCase.tearDown`
-            and other `~unittest.TestCase` methods, e.g. custom tests.
-            If decorated class already has `__doctestcase__` attribute,
-            `__doctestcase__.kwargs` dict is updated with new ``kwargs``.
+            ``__doctestcase__.kwargs`` and can be used in
+            :py:meth:`~unittest.TestCase.setUp`, :py:meth:`~unittest.TestCase.tearDown`,
+            and custom test methods of `~unittest.TestCase`.
 
-    Arguments passed to decorator are stored under decorated class attribute
-    ``__doctestcase__``. New test method ``test_docstring``, implementing docstring
-    evaluation, is added to the decorated class.
+    Attributes:
+        globals (`dict`):
+            ``gobals`` passed to decorator.
+        options (`int`):
+            ``options`` passed to decorator.
+        kwargs (`dict`):
+            ``**kwargs`` passed to decorator.
 
-    The `__doctestcase__` attribute as a copy of original decorator and contains
-    shallow copies of original `globals` and `kwargs`.
+    The decorator object, after being applied to the decorated class, stores its copy
+    under attribute ``__doctestcase__``, including `options` and shallow copies of
+    original `globals` and `kwargs`.
 
-    If the decorated class has no docstring or the docstring is blank, it is not
-    executed. The decorated class, as a subclass of `unittest.TestCase`, can define
-    :py:meth:`~unittest.TestCase.setUp` / `~unittest.TestCase.tearDown`
+    New test method ``test_docstring``, implementing
+    docstring evaluation, is added to the decorated class.
+    If the decorated class has no docstring or the docstring is blank,
+    ``test_docstring`` does nothing.
+
+    The decorated class, as a subclass of `unittest.TestCase`, can define
+    :py:meth:`~unittest.TestCase.setUp`, `~unittest.TestCase.tearDown`,
     and its own test methods (exept ``test_docstring``) that are executed
     before or after the docstring.
 
-    The doctestcase object, after being applied to `~unittest.TestCase` class,
+    If decorated class already has ``__doctestcase__`` attribute (obtained from
+    decoration or inherited from parent classes), it is replaced with a copy;
+    `globals` and `kwargs` are updated with values from the decorator,
+    and `options` is OR'ed with decorator's `options`.
+    This allows to extend test cases with multiple decoration and inheritance.
+    This also ensures that ``__doctestcase__`` attributes of subsequent classes are
+    independent, but *values* of `globals` and `kwargs` dictionaries reference the
+    same objects.
+
+    The `doctestcase` object, after being applied to `~unittest.TestCase` class,
     can be further reused to decorate other `~unittest.TestCase` classes. The same
-    is true for `__doctestcase__` attribute. On every decoration, a copy of it is
-    assigned to `__doctestcase__` attribute of the decorated class.
+    is true for ``__doctestcase__`` attribute.
 
     When `~unittest.TestCase` is inherited, the inherited class must be decorated
-    with `@doctestcase()` again.
-
-    This ensures that `__doctestcase__` attributes of subsequent classes are
-    independent, but values of `globals` and `kwargs` remain the same objects.
+    with `doctestcase` again.
 
     Example:
 
@@ -57,7 +67,7 @@ class doctestcase:
             from doctestcase import doctestcase
 
 
-            @doctestcase(globals=dict(X='yz'), options=ELLIPSIS)
+            @doctestcase(globals={'X': 'yz'}, options=ELLIPSIS)
             class SimpleCase(TestCase):
                 \"\"\"
                 Title
@@ -75,7 +85,7 @@ class doctestcase:
                 \"\"\"
 
     See Also:
-         More examples in :ref:`usage` documentation section.
+         :ref:`usage` documentation section  contains more examples and use cases.
     """
 
     def __init__(self, globals=None, options=0, **kwargs):

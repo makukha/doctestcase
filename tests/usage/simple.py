@@ -4,7 +4,7 @@ from unittest import TestCase
 from doctestcase import doctestcase
 
 
-@doctestcase(globals=dict(X='yz'), options=ELLIPSIS)
+@doctestcase(globals={'X': 'yz'}, options=ELLIPSIS)
 class SimpleCase(TestCase):
     """
     Title
@@ -21,9 +21,9 @@ class SimpleCase(TestCase):
     True
     """
 
-    def test_custom(self):  # called before test_docstring()
+    def test_custom(self):  # called before 'test_docstring'
         self.assertTrue(True)
 
-    def test_other(self):  # called after test_docstring()
+    def test_other(self):  # called after 'test_docstring'
         self.assertTrue(True)
 

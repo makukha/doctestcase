@@ -30,17 +30,21 @@ def to_markdown(item, title_depth=2, dedent=True):
     Convert docstring to `Markdown <https://www.markdownguide.org>`_.
 
     The first block of non-blank lines up to first blank line represents test case
-    title. It is merged into one line and formatted as section heading. Every doctest
-    block is enclosed with fenced code block.
+    title. It is joined in one line and formatted as section heading.
+
+    Every doctest block is formatted as code block.
 
     Args:
         item (`object` | `str` | `None`):
             input to be converted. If ``item`` is `str`, it will be used as input,
-            otherwise ``item.__doc__`` will be used. If input is blank string or
+            otherwise ``item.__doc__`` will be used. If input is blank or
             ``None``, empty string is returned.
         title_depth (`int` | `None`):
             heading level for test case title; defaults to ``2``. If ``None``,
-            title will not be matched and marked up (will be a part of the body text).
+            title is not matched and becomes a part of the body text.
+        dedent (`bool`):
+            `textwrap.dedent` is applied to the docstring by default; this can be
+            turned off by passing ``dedent=False``.
 
     Returns:
         `str`: Markdown formatted text; may be empty.
@@ -105,18 +109,22 @@ def to_rest(item, title_char='-', dedent=True):
     `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext>`_.
 
     The first block of non-blank lines up to first blank line represents test case
-    title. It is merged into one line and formatted as section heading. Every doctest
-    block is enclosed with fenced code block.
+    title. It is joined in one line and formatted as section heading.
+
+    Every doctest block is formatted as code block.
 
     Args:
         item (`object` | `str` | `None`):
             input to be converted. If ``item`` is `str`, it will be used as input,
-            otherwise ``item.__doc__`` will be used. If input is blank string or
+            otherwise ``item.__doc__`` will be used. If input is blank or
             ``None``, empty string is returned.
         title_char (`str` | `None`):
             heading underline character for test case title; defaults to ``'-'``.
-            If ``None``, title will not be matched and marked up (will be a part
-            of the body text).
+            If ``None``, title is not matched and becomes a part
+            of the body text.
+        dedent (`bool`):
+            `textwrap.dedent` is applied to the docstring by default; this can be
+            turned off by passing ``dedent=False``.
 
     Returns:
         `str`: reST formatted text; may be empty.

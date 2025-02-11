@@ -1,7 +1,7 @@
 # Usage
 
 <!-- docsub: begin -->
-<!-- docsub: x usecase ./test_usage.py:UseCase1 -->
+<!-- docsub: x case tests/test_usage.py:UseCase1 -->
 ## Use Case 1
 
 Long description of the use case.

@@ -10,6 +10,6 @@ def x() -> None:
 
 @x.command()
 @click.argument('case')
-def usecase(case: str) -> None:
+def case(case: str) -> None:
     text = to_markdown(Location(case).load(), title_depth=2)
     click.echo(text, nl=False)

@@ -1,4 +1,4 @@
-@doctestcase(globals=dict(A='bc'))
+@doctestcase(globals={'A': 'bc'})
 class InheritedCase(SimpleCase):
     """
     Title
