@@ -1,7 +1,7 @@
 # doctestcase
 <!-- docsub: begin -->
 <!-- docsub: include docs/desc.md -->
-> Decorate `unittest.TestCase` to evaluate doctests with configurable globals and `setUp`/`tearDown`. Format as Markdown and reST to include in docs.
+> Evaluate doctests with configurable globals and `setUp`–`tearDown`. Format as Markdown and reST to include in docs.
 <!-- docsub: end -->
 
 <!-- docsub: begin -->
@@ -48,12 +48,10 @@
 $ pip install doctestcase
 ```
 
-## Usage
+## Use cases
 
 <!-- docsub: begin #readme -->
 <!-- docsub: include docs/usage.md -->
-Common use cases:
-
 * Decorated `TestCase`
 * Reuse `__doctestcase__` from other `TestCase`
 * Parametrize test case
@@ -61,7 +59,7 @@ Common use cases:
 * Format docstring as Markdown or reStructuredText
 * Integration with [docsub](https://github.com/makukha/docsub)
 
-For `@doctestcase` details, check [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html).
+See [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html) for details.
 
 
 ### Decorated `TestCase`

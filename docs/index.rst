@@ -46,8 +46,8 @@ Installation
 
 .. _usage:
 
-Usage
------
+Use cases
+---------
 
 .. include:: usage.md
     :parser: commonmark

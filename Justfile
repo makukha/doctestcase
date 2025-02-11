@@ -98,7 +98,7 @@ gh-pr *title:
 #  Repository
 # -----------
 #
-# just gh-repo-desc
+# just gh-repo
 #
 
 # update GitHub repository metadata from pyproject.toml

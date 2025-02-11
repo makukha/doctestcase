@@ -1,5 +1,3 @@
-Common use cases:
-
 * Decorated `TestCase`
 * Reuse `__doctestcase__` from other `TestCase`
 * Parametrize test case
@@ -7,7 +5,7 @@ Common use cases:
 * Format docstring as Markdown or reStructuredText
 * Integration with [docsub](https://github.com/makukha/docsub)
 
-For `@doctestcase` details, check [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html).
+See [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html) for details.
 
 
 ### Decorated `TestCase`

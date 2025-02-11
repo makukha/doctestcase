@@ -5,8 +5,8 @@ build-backend = "hatchling.build"
 [project]
 name = "doctestcase"
 description = """\
-  Decorate `unittest.TestCase` to evaluate doctests with configurable globals \
-  and `setUp`/`tearDown`. Export to Markdown and reST to include in docs.\
+  Evaluate doctests with configurable globals and `setUp`–`tearDown`. \
+  Export to Markdown and reST to include in docs.\
 """
 license = {text = "MIT"}
 readme = "README.md"
