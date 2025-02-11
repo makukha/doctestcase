@@ -111,12 +111,12 @@ gh-repo:
 #  Release
 # ---------
 #
-# just pre-release
+# just pre-merge
 # just bump
 # just changelog
 # (proofread changelog)
 
-# just docs build
+# just pre-merge
 # (commit)
 #
 # just gh-pr
@@ -125,10 +125,6 @@ gh-repo:
 # just gh-release
 # just pypi-publish
 #
-
-# run pre-release
-[group('release')]
-pre-release: pre-merge
 
 # bump project version
 [group('release')]
