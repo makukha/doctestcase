@@ -2,6 +2,8 @@ import? '.gists/just-gh/Justfile'
 import? '.gists/just-scriv/Justfile'
 import? '.gists/just-version/Justfile'
 
+gist_owner := "makukha"
+
 
 # list available commands
 default:
@@ -13,7 +15,7 @@ default:
 init:
     #!/usr/bin/env bash
     set -euo pipefail
-    sudo port install gh uv yq
+    sudo port install gh git uv yq
     just sync
     # install pre-commit hook
     echo -e "#!/usr/bin/env bash\njust pre-commit" > .git/hooks/pre-commit
@@ -24,10 +26,10 @@ init:
 gist desc:
     #!/usr/bin/env bash
     set -euo pipefail
-    gist="$(gh api gists | yq '.[] | select(.description=="'"{{desc}}"'") | .id')"
     mkdir -p .gists
-    [ -d .gists/{{desc}} ] || gh gist clone "$gist" .gists/{{desc}}
-    cd .gists/{{desc}} && git pull
+    gist="$(gh api gists | yq '.[] | select(.description=="'"{{desc}}"'") | .id')"
+    [ -d .gists/{{desc}} ] || /opt/local/bin/git submodule add "https://gist.github.com/{{gist_owner}}/$gist" ".gists/{{desc}}"
+    /opt/local/bin/git submodule update ".gists/{{desc}}"
 
 # synchronize dev environment
 [group('initialize')]
