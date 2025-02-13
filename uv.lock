@@ -264,7 +264,7 @@ wheels = [
 
 [[package]]
 name = "doctestcase"
-version = "0.1.22222220"
+version = "0.1.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
