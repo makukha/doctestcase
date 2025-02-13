@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file based on [Ke
 
 - See upcoming changes in [News directory](https://github.com/makukha/doctestcase/tree/main/NEWS.d)
 
-<!-- towncrier release notes start -->
+<!-- scriv-insert-here -->
 
 ## [v0.1.0](https://github.com/makukha/doctestcase/releases/tag/v0.1.0) — 2025-02-11
 
