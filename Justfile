@@ -3,9 +3,6 @@ import? '.jist/manage.just'
 import? '.jist/scriv.just'
 import? '.jist/version.just'
 
-jist := "https://gist.github.com/makukha/34b318222a015eca1be6920d0e13532e"
-
-
 # list available commands
 default:
     @just --list
@@ -74,17 +71,20 @@ pypi-publish: build
 
 # run pre-commit hook
 [group('manage')]
-pre-commit: lint docs
+pre-commit:
+    just lint
+    just docs
 
 # run pre-merge
 [group('manage')]
-pre-merge: pre-commit test
+pre-merge:
+    just lint
+    just docs
+    just test
 
 # merge
 [group('manage')]
 merge:
-    #!/usr/bin/env bash
-    set -euo pipefail
     just pre-merge
     just gh-push
     just gh-pr
@@ -92,16 +92,15 @@ merge:
 # release
 [group('manage')]
 release:
-    #!/usr/bin/env bash
-    set -euo pipefail
     just pre-merge
     just bump
     just changelog
-    just prompt "Proofread the changelog"
+    just confirm "Proofread the changelog"
     just pre-merge
-    just prompt "Commit changes"
+    just confirm "Commit changes"
     just gh-pr
-    just prompt "Merge pull request"
+    just confirm "Merge pull request"
+    # switch to main branch
     just gh-release
-    just prompt "Publish GitHub release"
+    just confirm "Update release notes and publish GitHub release"
     just pypi-publish
