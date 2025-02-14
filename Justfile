@@ -95,7 +95,7 @@ release:
     #!/usr/bin/env bash
     set -euo pipefail
     just pre-merge
-    #just bump
+    just bump
     just changelog
     just prompt "Proofread the changelog"
     just pre-merge
