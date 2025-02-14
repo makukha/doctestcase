@@ -45,22 +45,27 @@ def get_title(item):
     return title or ''
 
 
-def get_body(item, parse_title=True, dedent=True):
+def get_body(item, remove_title=True, dedent=True):
     """
     Get body component of the docstring.
 
-    Body is the rest of the text after removing title.
+    Body is the rest of the text after removing title, and, if not empty, always ends
+    with newline.
 
     Args:
         item (`object` | `str` | `None`):
             input to be converted. If ``item`` is `str`, it will be used as input,
             otherwise ``item.__doc__`` will be used. If input is blank or
             ``None``, empty string is returned.
+        remove_title (`bool`, optional):
+            whether to remove title; defaults to `True`.
+        dedent (`bool`, optional):
+            whether to apply `textwrap.dedent` first; defaults to `True`.
 
     Returns:
         `str`: may be empty string.
     """
-    _, body = parse_title_body(get_doc(item, dedent=dedent), parse_title=parse_title)
+    _, body = parse_title_body(get_doc(item, dedent=dedent), parse_title=remove_title)
     return body or ''
 
 
@@ -116,16 +121,17 @@ def to_markdown(item, title_depth=2, dedent=True):
             True
             ```
     """
-    title, body = parse_title_body(get_doc(item, dedent), title_depth is not None)
-    if (title, body) == (None, None):
+    doc = get_doc(item, dedent=dedent)
+    title, body = parse_title_body(doc, parse_title=title_depth is not None)
+    if not title and not body:
         return ''
 
     chunks = []
-    if title is not None:
+    if title:
         chunks.append('{} {}\n'.format('#' * title_depth, title))
 
     if body:
-        if title is not None:
+        if title:
             chunks.append('\n')
         for item in parse_body_items(body):
             if isinstance(item, ExampleBlock):
@@ -187,16 +193,17 @@ def to_rest(item, title_char='-', dedent=True):
             >>> True
             True
     """
-    title, body = parse_title_body(get_doc(item, dedent), title_char is not None)
-    if (title, body) == (None, None):
+    doc = get_doc(item, dedent=dedent)
+    title, body = parse_title_body(doc, parse_title=title_char is not None)
+    if not title and not body:
         return ''
 
     chunks = []
-    if title is not None:
+    if title:
         chunks.append('{}\n{}\n'.format(title, title_char * max(3, len(title))))
 
     if body:
-        if title is not None:
+        if title:
             chunks.append('\n')
         chunks.append(body)
 
@@ -211,28 +218,26 @@ class ExampleBlock(str):
 
 
 def get_doc(item, dedent):
-    if item is None:
-        return ''
+    item = item or ''
     item = item if isinstance(item, str) else item.__doc__
+    if not item:
+        return ''
     if dedent:
         item = textwrap.dedent(item)
     return item.strip() + '\n'
 
 
 def parse_title_body(doc, parse_title):
-    if not doc:
-        return None, None
-
     if parse_title:
         match = RX_DOCSTRING.match(doc)
         if match is not None:
             title = ' '.join((t.strip() for t in match.group('title').splitlines()))
             body = match.group('body')
         else:
-            title = None
+            title = ''
             body = doc
     else:
-        title = None
+        title = ''
         body = doc
 
     if body is not None:

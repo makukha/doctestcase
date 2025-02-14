@@ -1,6 +1,50 @@
 from unittest import TestCase
 
-from doctestcase import to_markdown, to_rest
+from doctestcase import get_body, get_title, to_markdown, to_rest
+
+
+class Comoponents(TestCase):
+    def doc_missing(self):
+        pass
+
+    def doc_empty(self):
+        """"""
+
+    def doc_blank(self):
+        """ \n """
+
+    def doc_title_only(self):
+        """
+        Title
+        """
+
+    def doc_title_body(self):
+        """
+        Title
+
+        Body
+        """
+
+    def test_missing_empty_blank(self):
+        for item in (
+            self.doc_missing, self.doc_missing.__doc__,
+            self.doc_empty, self.doc_empty.__doc__,
+            self.doc_blank, self.doc_blank.__doc__,
+        ):
+            self.assertEqual(get_title(item), '')
+            self.assertEqual(get_body(item), '')
+
+    def test_title_only(self):
+        for item in (self.doc_title_only, self.doc_title_only.__doc__):
+            self.assertEqual(get_title(item), 'Title')
+            self.assertEqual(get_body(item), '')
+            self.assertEqual(get_body(item, remove_title=False), 'Title\n')
+
+    def test_title_body(self):
+        for item in (self.doc_title_body, self.doc_title_body.__doc__):
+            self.assertEqual(get_title(item), 'Title')
+            self.assertEqual(get_body(item), 'Body\n')
+            self.assertEqual(get_body(item, remove_title=False), 'Title\n\nBody\n')
 
 
 class Formatting(TestCase):
