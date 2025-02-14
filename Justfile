@@ -56,7 +56,9 @@ lint:
 # run tests
 [group('develop')]
 test *toxargs: build
-    time docker compose run --rm -it tox run --installpkg="$(find dist -name '*.whl')" {{toxargs}}
+    time docker compose run --rm -it tox \
+        {{ if toxargs == "" { "run-parallel" } else { "run" } }} \
+         --installpkg="$(find dist -name '*.whl')" {{toxargs}}
     make badges
 
 # enter testing docker container
