@@ -29,7 +29,7 @@ gist desc:
     mkdir -p .gists
     gist="$(gh api gists | yq '.[] | select(.description=="'"{{desc}}"'") | .id')"
     [ -d .gists/{{desc}} ] || /opt/local/bin/git submodule add "https://gist.github.com/{{gist_owner}}/$gist" ".gists/{{desc}}"
-    /opt/local/bin/git submodule update ".gists/{{desc}}"
+    /opt/local/bin/git submodule update --remote ".gists/{{desc}}"
 
 # synchronize dev environment
 [group('initialize')]
@@ -41,7 +41,7 @@ sync:
 
 # update dev environment
 [group('initialize')]
-upd:
+upgrade:
     uv sync --all-extras --all-groups --upgrade
 
 # develop
