@@ -8,6 +8,13 @@ All notable changes to this project will be documented in this file based on [Ke
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-0.2.1'></a>
+## [0.2.1](https://github.com/makukha/doctestcase/releases/tag/v0.2.1) — 2025-02-14
+
+***Docs***
+
+- Fixed documentation error: `@unittest.skip` on base class skipped all inherited tests as well
+
 <a id='changelog-0.2.0'></a>
 ## [0.2.0](https://github.com/makukha/doctestcase/releases/tag/v0.2.0) — 2025-02-14
 
