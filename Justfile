@@ -56,9 +56,7 @@ lint:
 # run tests
 [group('develop')]
 test *toxargs: build
-    time docker compose run --rm -it tox \
-        {{ if toxargs == "" { "run-parallel" } else { "run" } }} \
-        --installpkg="$(find dist -name '*.whl')" {{toxargs}}
+    time docker compose run --rm -it tox run --installpkg="$(find dist -name '*.whl')" {{toxargs}}
     make badges
 
 # enter testing docker container
@@ -93,7 +91,7 @@ pre-commit: lint docs
 
 # run pre-merge
 [group('manage')]
-pre-merge: lint test docs
+pre-merge: pre-commit test
 
 # merge
 [group('manage')]
@@ -112,11 +110,11 @@ release:
     just pre-merge
     just bump
     just changelog
-    echo -n "\nProofread the changelog, then press enter: "
+    echo -n "\nProofread the changelog, then press enter: " && read
     just pre-merge
-    echo -n "\nCommit changes, then press enter: "
+    echo -n "\nCommit changes, then press enter: " && read
     just gh-pr
-    echo -n "\nMerge pull request, then press enter: "
+    echo -n "\nMerge pull request, then press enter: " && read
     just gh-release
-    echo -n "\nPublish GitHub release, then press enter: "
+    echo -n "\nPublish GitHub release, then press enter: " && read
     just pypi-publish
