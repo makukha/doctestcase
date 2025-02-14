@@ -100,7 +100,8 @@ release:
     just confirm "Commit changes"
     just gh-pr
     just confirm "Merge pull request"
-    # switch to main branch
+    git switch main
+    just gh-repo-upd
     just gh-release
     just confirm "Update release notes and publish GitHub release"
     just pypi-publish
