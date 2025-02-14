@@ -8,7 +8,21 @@ All notable changes to this project will be documented in this file based on [Ke
 
 <!-- scriv-insert-here -->
 
-## [v0.1.0](https://github.com/makukha/doctestcase/releases/tag/v0.1.0) — 2025-02-11
+<a id='changelog-0.2.0'></a>
+## [0.2.0](https://github.com/makukha/doctestcase/releases/tag/v0.2.0) — 2025-02-14
+
+***Added 🌿***
+
+- Functions `get_title` and `get_body` to retrieve separate docstring components
+
+***Misc***
+
+- Started using [scriv](https://github.com/nedbat/scriv) for changelog management
+
+- Started using gist-based dev operations
+
+<a id='changelog-0.1.0'></a>
+## [0.1.0](https://github.com/makukha/doctestcase/releases/tag/v0.1.0) — 2025-02-11
 
 ***Added 🌿***
 

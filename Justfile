@@ -1,8 +1,9 @@
-import? '.gists/just-gh/Justfile'
-import? '.gists/just-scriv/Justfile'
-import? '.gists/just-version/Justfile'
+import? '.jist/gh.just'
+import? '.jist/manage.just'
+import? '.jist/scriv.just'
+import? '.jist/version.just'
 
-gist_owner := "makukha"
+jist := "https://gist.github.com/makukha/34b318222a015eca1be6920d0e13532e"
 
 
 # list available commands
@@ -13,31 +14,15 @@ default:
 [group('initialize')]
 [macos]
 init:
-    #!/usr/bin/env bash
-    set -euo pipefail
     sudo port install gh git uv yq
+    just pre-commit-init
     just sync
-    # install pre-commit hook
-    echo -e "#!/usr/bin/env bash\njust pre-commit" > .git/hooks/pre-commit
-    chmod a+x .git/hooks/pre-commit
-
-# clone gists
-[group('initialize')]
-gist desc:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    mkdir -p .gists
-    gist="$(gh api gists | yq '.[] | select(.description=="'"{{desc}}"'") | .id')"
-    [ -d .gists/{{desc}} ] || /opt/local/bin/git submodule add "https://gist.github.com/{{gist_owner}}/$gist" ".gists/{{desc}}"
-    /opt/local/bin/git submodule update --remote ".gists/{{desc}}"
 
 # synchronize dev environment
 [group('initialize')]
 sync:
+    git submodule update --remote .jist
     uv sync --all-extras --all-groups
-    just gist just-gh
-    just gist just-scriv
-    just gist just-version
 
 # update dev environment
 [group('initialize')]
@@ -112,11 +97,11 @@ release:
     just pre-merge
     just bump
     just changelog
-    echo -n "\nProofread the changelog, then press enter: " && read
+    just prompt "Proofread the changelog"
     just pre-merge
-    echo -n "\nCommit changes, then press enter: " && read
+    just prompt "Commit changes"
     just gh-pr
-    echo -n "\nMerge pull request, then press enter: " && read
+    just prompt "Merge pull request"
     just gh-release
-    echo -n "\nPublish GitHub release, then press enter: " && read
+    just prompt "Publish GitHub release"
     just pypi-publish

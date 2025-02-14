@@ -70,7 +70,7 @@ docs = [
 # bump-my-version
 
 [tool.bumpversion]
-current_version = "0.1.0"
+current_version = "0.2.0"
 allow_dirty = true
 files = [
   {filename = "docs/badges.md"},
@@ -92,9 +92,10 @@ path = "src/doctestcase/__init__.py"
 # mypy
 
 [tool.mypy]
+exclude = "tests/usage"
+incremental = false
 python_version = "3.9"
 strict = true
-exclude = "tests/usage"
 [[tool.mypy.overrides]]
 module = "tests.*"
 allow_incomplete_defs = true
@@ -124,5 +125,5 @@ entry_title_template = "[{% if version %}{{ version }}](https://github.com/makuk
 format = "md"
 fragment_directory = "NEWS.d"
 md_header_level = "2"
-new_fragment_template = "file: .gists/just-scriv/new_fragment.${config:format}.j2"
+new_fragment_template = "file: .jist/scriv.new_fragment.md.j2"
 version = "command: just version"
