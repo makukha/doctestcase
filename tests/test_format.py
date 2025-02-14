@@ -11,7 +11,9 @@ class Comoponents(TestCase):
         """"""
 
     def doc_blank(self):
+        # fmt: off
         """ \n """
+        # fmt: on
 
     def doc_title_only(self):
         """
@@ -26,6 +28,7 @@ class Comoponents(TestCase):
         """
 
     def test_missing_empty_blank(self):
+        # fmt: off
         for item in (
             self.doc_missing, self.doc_missing.__doc__,
             self.doc_empty, self.doc_empty.__doc__,
@@ -33,6 +36,7 @@ class Comoponents(TestCase):
         ):
             self.assertEqual(get_title(item), '')
             self.assertEqual(get_body(item), '')
+        # fmt: on
 
     def test_title_only(self):
         for item in (self.doc_title_only, self.doc_title_only.__doc__):
