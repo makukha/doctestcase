@@ -1,9 +1,3 @@
-[submodule ".gists/just-gh"]
-	path = .gists/just-gh
-	url = https://gist.github.com/makukha/8bb4ba742ce585cc62f0bf9143ac39da
-[submodule ".gists/just-scriv"]
-	path = .gists/just-scriv
-	url = https://gist.github.com/makukha/6f04a78e61cc735f8b0a133a126e2d73
-[submodule ".gists/just-version"]
-	path = .gists/just-version
-	url = https://gist.github.com/makukha/47e99e9750bbb105b854d12089442bb5
+[submodule ".jist"]
+	path = .jist
+	url = https://gist.github.com/makukha/34b318222a015eca1be6920d0e13532e
