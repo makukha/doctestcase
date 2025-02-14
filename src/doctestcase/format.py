@@ -25,6 +25,50 @@ RX_EXAMPLE_BLOCK = re.compile(
 )
 
 
+def get_title(item):
+    """
+    Get title component of the docstring.
+
+    Title is the first block of non-blank lines up to the first blank line.
+    Title lines, if multiple, are joined.
+
+    Args:
+        item (`object` | `str` | `None`):
+            input to be converted. If ``item`` is `str`, it will be used as input,
+            otherwise ``item.__doc__`` will be used. If input is blank or
+            ``None``, empty string is returned.
+
+    Returns:
+        `str`: may be empty string.
+    """
+    title, _ = parse_title_body(get_doc(item, dedent=True), parse_title=True)
+    return title or ''
+
+
+def get_body(item, remove_title=True, dedent=True):
+    """
+    Get body component of the docstring.
+
+    Body is the rest of the text after removing title, and, if not empty, always ends
+    with newline.
+
+    Args:
+        item (`object` | `str` | `None`):
+            input to be converted. If ``item`` is `str`, it will be used as input,
+            otherwise ``item.__doc__`` will be used. If input is blank or
+            ``None``, empty string is returned.
+        remove_title (`bool`, optional):
+            whether to remove title; defaults to `True`.
+        dedent (`bool`, optional):
+            whether to apply `textwrap.dedent` first; defaults to `True`.
+
+    Returns:
+        `str`: may be empty string.
+    """
+    _, body = parse_title_body(get_doc(item, dedent=dedent), parse_title=remove_title)
+    return body or ''
+
+
 def to_markdown(item, title_depth=2, dedent=True):
     """
     Convert docstring to `Markdown <https://www.markdownguide.org>`_.
@@ -77,22 +121,17 @@ def to_markdown(item, title_depth=2, dedent=True):
             True
             ```
     """
-    if item is None:
-        return ''
-    item = item if isinstance(item, str) else item.__doc__
-    if dedent:
-        item = textwrap.dedent(item)
-
-    title, body = parse_title_body(item, parse_title=title_depth is not None)
-    if (title, body) == (None, None):
+    doc = get_doc(item, dedent=dedent)
+    title, body = parse_title_body(doc, parse_title=title_depth is not None)
+    if not title and not body:
         return ''
 
     chunks = []
-    if title is not None:
+    if title:
         chunks.append('{} {}\n'.format('#' * title_depth, title))
 
     if body:
-        if title is not None:
+        if title:
             chunks.append('\n')
         for item in parse_body_items(body):
             if isinstance(item, ExampleBlock):
@@ -154,22 +193,17 @@ def to_rest(item, title_char='-', dedent=True):
             >>> True
             True
     """
-    if item is None:
-        return ''
-    item = item if isinstance(item, str) else item.__doc__
-    if dedent:
-        item = textwrap.dedent(item)
-
-    title, body = parse_title_body(item, parse_title=title_char is not None)
-    if (title, body) == (None, None):
+    doc = get_doc(item, dedent=dedent)
+    title, body = parse_title_body(doc, parse_title=title_char is not None)
+    if not title and not body:
         return ''
 
     chunks = []
-    if title is not None:
+    if title:
         chunks.append('{}\n{}\n'.format(title, title_char * max(3, len(title))))
 
     if body:
-        if title is not None:
+        if title:
             chunks.append('\n')
         chunks.append(body)
 
@@ -183,21 +217,27 @@ class ExampleBlock(str):
     """Internal marker type to represent lines of block of examples"""
 
 
-def parse_title_body(s, parse_title=True):
-    doc = (s or '').strip()
-    if not doc:
-        return None, None
+def get_doc(item, dedent):
+    item = item or ''
+    item = item if isinstance(item, str) else item.__doc__
+    if not item:
+        return ''
+    if dedent:
+        item = textwrap.dedent(item)
+    return item.strip() + '\n'
 
+
+def parse_title_body(doc, parse_title):
     if parse_title:
         match = RX_DOCSTRING.match(doc)
         if match is not None:
             title = ' '.join((t.strip() for t in match.group('title').splitlines()))
             body = match.group('body')
         else:
-            title = None
+            title = ''
             body = doc
     else:
-        title = None
+        title = ''
         body = doc
 
     if body is not None:
@@ -208,10 +248,10 @@ def parse_title_body(s, parse_title=True):
     return title, body
 
 
-def parse_body_items(s):
+def parse_body_items(body):
     charno = 0
-    for m in RX_EXAMPLE_BLOCK.finditer(s):
-        yield s[charno : m.start()]
-        yield ExampleBlock(s[m.start() : m.end()])
+    for m in RX_EXAMPLE_BLOCK.finditer(body):
+        yield body[charno : m.start()]
+        yield ExampleBlock(body[m.start() : m.end()])
         charno = m.end()
-    yield s[charno:]
+    yield body[charno:]
