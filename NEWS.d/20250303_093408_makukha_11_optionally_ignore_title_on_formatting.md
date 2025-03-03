@@ -18,11 +18,11 @@
 
 - What has been done?
 -->
-<!--
+
 # Added 🌿
 
-- What has been done?
--->
+- Functions `to_markdown()` and `to_rest()` now have optional argument `include_title=True` to exclude doctest title.
+
 <!--
 # Changed
 

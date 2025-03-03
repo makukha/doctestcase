@@ -9,11 +9,13 @@ def to_markdown(
     item: Item,
     title_depth: Optional[int] = ...,
     dedent: bool = ...,
+    include_title: bool = ...,
 ) -> str: ...
 def to_rest(
     item: Item,
     title_char: Optional[str] = ...,
     dedent: bool = ...,
+    include_title: bool = ...,
 ) -> str: ...
 
 class ExampleBlock(list[str]): ...

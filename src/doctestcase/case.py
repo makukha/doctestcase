@@ -7,24 +7,30 @@ class doctestcase:
     `unittest.TestCase`.
 
     Args:
-        globals (`dict` | `None`):
+
+        globals (``dict`` | ``None``, optional):
             dictionary of globals passed to the doctest; defaults to ``None``
             (no additional globals).
-        options (`int`):
+
+        options (``int``, optional):
             `doctest` options, passed to `doctest.DocTestRunner`; defaults to
             ``0`` (no options).
-        kwargs (`dict`):
+
+        kwargs (``dict``, optional):
             additional keyword arguments that will be stored under
             ``__doctestcase__.kwargs`` and can be used in
             :py:meth:`~unittest.TestCase.setUp`, :py:meth:`~unittest.TestCase.tearDown`,
             and custom test methods of `~unittest.TestCase`.
 
     Attributes:
-        globals (`dict`):
+
+        globals (``dict``):
             ``gobals`` passed to decorator.
-        options (`int`):
+
+        options (``int``):
             ``options`` passed to decorator.
-        kwargs (`dict`):
+
+        kwargs (``dict``):
             ``**kwargs`` passed to decorator.
 
     The decorator object, after being applied to the decorated class, stores its copy
