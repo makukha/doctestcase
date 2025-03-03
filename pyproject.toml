@@ -4,17 +4,17 @@ build-backend = "hatchling.build"
 
 [project]
 name = "doctestcase"
-description = """\
-  Evaluate doctests with configurable globals and `setUp`–`tearDown`. \
-  Export to Markdown and reST to include in docs.\
-"""
+description = "Evaluate doctests with configurable globals and `setUp`–`tearDown`. Export to Markdown and reST to include in docs."
+authors = [
+  {name = "Michael Makukha", email = "m.makukha@gmail.com"},
+]
 license = {text = "MIT"}
 readme = "README.md"
 urls.Documentation = "https://doctestcase.readthedocs.io"
 urls.Homepage = "https://github.com/makukha/doctestcase"
 urls.Repository = "https://github.com/makukha/doctestcase"
 urls.Issues = "https://github.com/makukha/doctestcase/issues"
-urls.Changelog = "https://github.com/makukha/doctestcase/releases"
+urls.Changelog = "https://github.com/makukha/doctestcase/blob/main/CHANGELOG.md"
 keywords = ["unittest", "doctest", "test-case", "markdown", "rst", "restructuredtext"]
 classifiers = [
   # see https://pypi.org/classifiers/
@@ -50,21 +50,29 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-  "bump-my-version>=0.32 ; python_version >= '3.12'",
-  "docsub>=0.9 ; python_version >= '3.12'",
-  "genbadge[tests,coverage]>=1.1 ; python_version >= '3.12'",
-  "mypy ; python_version >= '3.12'",
-  "pytest>=8.3 ; python_version >= '3.12'",
-  "ruff ; python_version >= '3.12'",
-  "scriv>=1.5 ; python_version >= '3.12'",
+  "bump-my-version>=0.33 ; python_version >= '3.13'",
+  "docsub>=0.9.0 ; python_version >= '3.13'",
+  "genbadge[tests,coverage]>=1.1 ; python_version >= '3.13'",
+  "mypy>=1.15 ; python_version >= '3.13'",
+  "ruff>=0.9 ; python_version >= '3.13'",
+  "scriv>=1.5 ; python_version >= '3.13'",
 ]
 docs = [
+  # see readthedocs.yaml
   "furo ; python_version >= '3.12'",
   "myst-parser ; python_version >= '3.12'",
   "sphinx ; python_version >= '3.12'",
-  "sphinx-copybutton>=0.3 ; python_version >= '3.12'",
+  "sphinx-copybutton ; python_version >= '3.12'",
   "sphinx-design ; python_version >= '3.12'",
   "sphinx-sitemap ; python_version >= '3.12'",
+]
+testing = [
+  "docsub>=0.9.0 ; python_version >= '3.9'",  # used in tests
+  "doctestcase>=0.2.1",
+  "mypy ; python_version >= '3.8'",  # see tox.ini
+  "pytest>=8 ; python_version >= '3.8'",  # see tox.ini
+  "pytest-cov>=6 ; python_version >= '3.13'",
+  "pytest-sugar>=1 ; python_version >= '3.13'",
 ]
 
 # bump-my-version
@@ -74,32 +82,41 @@ current_version = "0.2.1"
 allow_dirty = true
 files = [
   {filename = "docs/badges.md"},
-  {filename = "docs/conf.py"},
-  {filename = "src/doctestcase/__init__.py"},
+  {filename = "docs/sphinx/conf.py"},
+  {filename = "src/doctestcase/__version__.py"},
 ]
 
 # hatch
 
 [tool.hatch.build]
 exclude = [
+  ".just",
   "Justfile",
   "Makefile",
   "compose.yml",
 ]
 [tool.hatch.version]
-path = "src/doctestcase/__init__.py"
+path = "src/doctestcase/__version__.py"
 
 # mypy
 
 [tool.mypy]
-exclude = "tests/usage"
 incremental = false
 python_version = "3.9"
 strict = true
+exclude = [
+  "tests/docsub",  # todo: include back when docsub typing is fixed
+  "tests/usage",
+]
 [[tool.mypy.overrides]]
 module = "tests.*"
 allow_incomplete_defs = true
 allow_untyped_defs = true
+
+# pytest
+
+[tool.pytest.ini_options]
+ignore = ["tests/usage"]
 
 # ruff
 
@@ -121,10 +138,9 @@ docstring-code-line-length = "dynamic"
 
 [tool.scriv]
 categories = ["Security ⚠️", "Breaking 🔥", "Removed 💨", "Deprecated ❄️", "Added 🌿", "Changed", "Fixed", "Docs", "Misc"]
-entry_title_template = "[{% if version %}{{ version }}](https://github.com/makukha/doctestcase/releases/tag/v{{ version }}) — {% endif %}{{ date.strftime('%Y-%m-%d') }}"
-ghrel_template = "command: just gh-issue-title"  # abuse config option to pass default message
+entry_title_template = "[{{ version }}](https://github.com/makukha/doctestcase/releases/tag/v{{ version }}) — {{ date.strftime('%Y-%m-%d') }}"
 format = "md"
 fragment_directory = "NEWS.d"
-md_header_level = "2"
-new_fragment_template = "file: .jist/scriv.new_fragment.md.j2"
-version = "command: just version"
+md_header_level = "6"
+new_fragment_template = "file: NEWS.d/.new_fragment.md.j2"
+version = "literal: pyproject.toml: tool.bumpversion.current_version"

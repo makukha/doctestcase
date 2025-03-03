@@ -1,0 +1,20 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 12e20b9
+_src_path: gh:makukha/copier-python
+author_email: m.makukha@gmail.com
+author_name: Michael Makukha
+copyright_year: 2025
+docs: readthedocs
+docs_url: https://doctestcase.readthedocs.io
+github_slug: makukha/doctestcase
+github_url: https://github.com/makukha/doctestcase
+module_name: doctestcase
+project_description: Evaluate doctests with configurable globals and `setUp`–`tearDown`.
+    Export to Markdown and reST to include in docs.
+project_name: doctestcase
+project_version: 0.2.1
+pypi_package_name: doctestcase
+pypi_url: https://pypi.org/project/doctestcase
+python_version: 3.13.2
+python_version_minor: '3.13'
+readthedocs_tool: sphinx

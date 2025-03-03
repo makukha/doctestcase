@@ -132,6 +132,13 @@ class Formatting(TestCase):
         self.assertEqual('## Title\n\nText.\n', to_markdown(t))
         self.assertEqual('Title\n-----\n\nText.\n', to_rest(t))
 
+    # title not included
+
+    def test_title_not_included(self):
+        t = '\nTitle\n\nText.\n'
+        self.assertEqual('Text.\n', to_markdown(t, include_title=False))
+        self.assertEqual('Text.\n', to_rest(t, include_title=False))
+
     # doctests
 
     def test_doctest_with_interleaving_text(self):

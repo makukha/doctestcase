@@ -1,43 +1,47 @@
-import? '.jist/gh.just'
-import? '.jist/manage.just'
-import? '.jist/scriv.just'
-import? '.jist/version.just'
+import? '.just/changelog.just'
+import? '.just/gh.just'
+import? '.just/version.just'
 
 # list available commands
 default:
     @just --list
 
+#
+# Develop
+#
+
 # initialize dev environment
-[group('initialize')]
-[macos]
+[group('develop'), macos]
 init:
     sudo port install gh git uv yq
-    just pre-commit-init
+    echo -e "#!/usr/bin/env bash\njust pre-commit" > .git/hooks/pre-commit
+    chmod ug+x .git/hooks/*
     just sync
 
 # synchronize dev environment
-[group('initialize')]
+[group('develop')]
 sync:
-    git submodule update --remote .jist
     uv sync --all-extras --all-groups
+    make requirements
 
 # update dev environment
-[group('initialize')]
+[group('develop')]
 upgrade:
     uv sync --all-extras --all-groups --upgrade
-
-# develop
+    make requirements
+    copier update --defaults --trust --vcs-ref main
 
 # run linters
 [group('develop')]
 lint:
     uv run mypy .
     uv run ruff check
-    uv run ruff format --check
+    uv run ruff format --diff
 
 # run tests
 [group('develop')]
 test *toxargs: build
+    make tests/requirements.txt
     time docker compose run --rm -it tox \
         {{ if toxargs == "" { "run-parallel" } else { "run" } }} \
          --installpkg="$(find dist -name '*.whl')" {{toxargs}}
@@ -58,7 +62,9 @@ build: sync
 docs:
     make docs
 
-# publish
+#
+# Publish
+#
 
 # publish package on PyPI
 [group('publish')]
@@ -66,8 +72,13 @@ pypi-publish: build
     uv publish
 
 #
-# Operations
+# Manage
 #
+
+# display confirmation prompt
+[private]
+confirm msg:
+    @printf "\n{{msg}}, then press enter " && read
 
 # run pre-commit hook
 [group('manage')]
@@ -101,6 +112,8 @@ release:
     just gh-pr
     just confirm "Merge pull request"
     git switch main
+    git fetch
+    git pull
     just gh-repo-upd
     just gh-release
     just confirm "Update release notes and publish GitHub release"

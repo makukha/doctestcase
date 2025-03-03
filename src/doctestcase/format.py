@@ -33,13 +33,13 @@ def get_title(item):
     Title lines, if multiple, are joined.
 
     Args:
-        item (`object` | `str` | `None`):
-            input to be converted. If ``item`` is `str`, it will be used as input,
+        item (``object`` | ``str`` | ``None``):
+            input to be converted. If ``item`` is ``str``, it will be used as input,
             otherwise ``item.__doc__`` will be used. If input is blank or
             ``None``, empty string is returned.
 
     Returns:
-        `str`: may be empty string.
+        ``str``: may be empty string.
     """
     title, _ = parse_title_body(get_doc(item, dedent=True), parse_title=True)
     return title or ''
@@ -53,14 +53,14 @@ def get_body(item, remove_title=True, dedent=True):
     with newline.
 
     Args:
-        item (`object` | `str` | `None`):
-            input to be converted. If ``item`` is `str`, it will be used as input,
+        item (``object`` | ``str`` | ``None``):
+            input to be converted. If ``item`` is ``str``, it will be used as input,
             otherwise ``item.__doc__`` will be used. If input is blank or
             ``None``, empty string is returned.
-        remove_title (`bool`, optional):
-            whether to remove title; defaults to `True`.
-        dedent (`bool`, optional):
-            whether to apply `textwrap.dedent` first; defaults to `True`.
+        remove_title (``bool``, optional):
+            whether to remove title; defaults to ``True``.
+        dedent (``bool``, optional):
+            whether to apply `textwrap.dedent` first; defaults to ``True``.
 
     Returns:
         `str`: may be empty string.
@@ -69,7 +69,7 @@ def get_body(item, remove_title=True, dedent=True):
     return body or ''
 
 
-def to_markdown(item, title_depth=2, dedent=True):
+def to_markdown(item, title_depth=2, dedent=True, include_title=True):
     """
     Convert docstring to `Markdown <https://www.markdownguide.org>`_.
 
@@ -79,19 +79,21 @@ def to_markdown(item, title_depth=2, dedent=True):
     Every doctest block is formatted as code block.
 
     Args:
-        item (`object` | `str` | `None`):
+        item (``object`` | ``str`` | ``None``):
             input to be converted. If ``item`` is `str`, it will be used as input,
             otherwise ``item.__doc__`` will be used. If input is blank or
             ``None``, empty string is returned.
-        title_depth (`int` | `None`):
+        title_depth (``int`` | ``None``, optional):
             heading level for test case title; defaults to ``2``. If ``None``,
             title is not matched and becomes a part of the body text.
-        dedent (`bool`):
+        dedent (``bool``, optional):
             `textwrap.dedent` is applied to the docstring by default; this can be
             turned off by passing ``dedent=False``.
+        include_title (``bool``, optional):
+            whether to include docstring title in the output; defaults to ``True``.
 
     Returns:
-        `str`: Markdown formatted text; may be empty.
+        ``str``: Markdown formatted text; may be empty.
 
     Example:
 
@@ -127,11 +129,11 @@ def to_markdown(item, title_depth=2, dedent=True):
         return ''
 
     chunks = []
-    if title:
+    if title and include_title:
         chunks.append('{} {}\n'.format('#' * title_depth, title))
 
     if body:
-        if title:
+        if title and include_title:
             chunks.append('\n')
         for item in parse_body_items(body):
             if isinstance(item, ExampleBlock):
@@ -142,7 +144,7 @@ def to_markdown(item, title_depth=2, dedent=True):
     return ''.join(chunks)
 
 
-def to_rest(item, title_char='-', dedent=True):
+def to_rest(item, title_char='-', dedent=True, include_title=True):
     """
     Convert docstring to
     `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext>`_.
@@ -153,20 +155,21 @@ def to_rest(item, title_char='-', dedent=True):
     Every doctest block is formatted as code block.
 
     Args:
-        item (`object` | `str` | `None`):
+        item (``object`` | `str` | `None`):
             input to be converted. If ``item`` is `str`, it will be used as input,
             otherwise ``item.__doc__`` will be used. If input is blank or
             ``None``, empty string is returned.
-        title_char (`str` | `None`):
+        title_char (``str`` | ``None``, optional):
             heading underline character for test case title; defaults to ``'-'``.
-            If ``None``, title is not matched and becomes a part
-            of the body text.
-        dedent (`bool`):
+            If ``None``, title is not matched and becomes a part of the body text.
+        dedent (``bool``, optional):
             `textwrap.dedent` is applied to the docstring by default; this can be
             turned off by passing ``dedent=False``.
+        include_title (``bool``):
+            whether to include docstring title in the output; defaults to ``True``.
 
     Returns:
-        `str`: reST formatted text; may be empty.
+        ``str``: reST formatted text; may be empty.
 
     Example:
 
@@ -199,11 +202,11 @@ def to_rest(item, title_char='-', dedent=True):
         return ''
 
     chunks = []
-    if title:
+    if title and include_title:
         chunks.append('{}\n{}\n'.format(title, title_char * max(3, len(title))))
 
     if body:
-        if title:
+        if title and include_title:
             chunks.append('\n')
         chunks.append(body)
 
