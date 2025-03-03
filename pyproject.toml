@@ -142,6 +142,6 @@ categories = ["Security ⚠️", "Breaking 🔥", "Removed 💨", "Deprecated �
 entry_title_template = "[{{ version }}](https://github.com/makukha/doctestcase/releases/tag/v{{ version }}) — {{ date.strftime('%Y-%m-%d') }}"
 format = "md"
 fragment_directory = "NEWS.d"
-md_header_level = "6"
+md_header_level = "2"
 new_fragment_template = "file: NEWS.d/.new_fragment.md.j2"
 version = "literal: pyproject.toml: tool.bumpversion.current_version"
