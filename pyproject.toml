@@ -81,6 +81,7 @@ testing = [
 current_version = "0.2.1"
 allow_dirty = true
 files = [
+  {filename = ".copier-answers.yml"},
   {filename = "docs/badges.md"},
   {filename = "docs/sphinx/conf.py"},
   {filename = "src/doctestcase/__version__.py"},
