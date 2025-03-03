@@ -8,6 +8,19 @@ All notable changes to this project will be documented in this file based on [Ke
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-0.2.2'></a>
+## [0.2.2](https://github.com/makukha/doctestcase/releases/tag/v0.2.2) — 2025-03-03
+
+***Added 🌿***
+
+- Functions `to_markdown()` and `to_rest()` now have optional argument `include_title=True` to exclude doctest title.
+
+***Misc***
+
+- Started using [makukha/copier-python](https://github.com/makukha/copier-python) project template.
+
+- Synchronized project template.
+
 <a id='changelog-0.2.1'></a>
 ## [0.2.1](https://github.com/makukha/doctestcase/releases/tag/v0.2.1) — 2025-02-14
 
