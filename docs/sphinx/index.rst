@@ -1,8 +1,7 @@
 doctestcase
 ===========
 
-.. include:: desc.md
-    :parser: commonmark
+| *Evaluate doctests with configurable globals and `setUp`–`tearDown`. Export to Markdown and reST to include in docs.*
 
 .. toctree::
     :maxdepth: 1
@@ -12,20 +11,19 @@ doctestcase
     api
     changelog
 
-.. include:: badges.md
+.. include:: ../badges.md
     :parser: commonmark
 
-Features
---------
-
-.. include:: features.md
+.. include:: ../features.md
     :parser: commonmark
+
 
 Alternatives
 ------------
 
 .. include:: alternatives.md
     :parser: commonmark
+
 
 Installation
 ------------
@@ -44,10 +42,11 @@ Installation
 
             $ uv add doctestcase
 
+
 .. _usage:
 
 Use cases
 ---------
 
-.. include:: usage.md
+.. include:: ../usage.md
     :parser: commonmark

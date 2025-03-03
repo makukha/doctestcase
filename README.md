@@ -1,16 +1,16 @@
 # doctestcase
 <!-- docsub: begin -->
-<!-- docsub: include docs/desc.md -->
-> Evaluate doctests with configurable globals and `setUp`–`tearDown`. Format as Markdown and reST to include in docs.
+<!-- docsub: exec yq '"> " + .project.description' pyproject.toml -->
+> Evaluate doctests with configurable globals and `setUp`–`tearDown`. Export to Markdown and reST to include in docs.
 <!-- docsub: end -->
 
 <!-- docsub: begin -->
 <!-- docsub: include docs/badges.md -->
 [![license](https://img.shields.io/github/license/makukha/doctestcase.svg)](https://github.com/makukha/doctestcase/blob/main/LICENSE)
-[![pypi](https://img.shields.io/pypi/v/doctestcase.svg#v0.2.1)](https://pypi.python.org/pypi/doctestcase)
+[![pypi](https://img.shields.io/pypi/v/doctestcase.svg#v0.2.1)](https://pypi.org/project/doctestcase)
 [![python versions](https://img.shields.io/pypi/pyversions/doctestcase.svg)](https://pypi.org/project/doctestcase)
-[![tests](https://raw.githubusercontent.com/makukha/doctestcase/v0.2.1/docs/_static/badge-tests.svg)](https://github.com/makukha/doctestcase)
-[![coverage](https://raw.githubusercontent.com/makukha/doctestcase/v0.2.1/docs/_static/badge-coverage.svg)](https://github.com/makukha/doctestcase)
+[![tests](https://raw.githubusercontent.com/makukha/doctestcase/v0.2.1/docs/img/badge/tests.svg)](https://github.com/makukha/doctestcase)
+[![coverage](https://raw.githubusercontent.com/makukha/doctestcase/v0.2.1/docs/img/badge/coverage.svg)](https://github.com/makukha/doctestcase)
 [![tested with multipython](https://img.shields.io/badge/tested_with-multipython-x)](https://github.com/makukha/multipython)
 [![uses docsub](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/makukha/docsub/refs/heads/main/docs/badge/v1.json)](https://github.com/makukha/docsub)
 [![mypy](https://img.shields.io/badge/type_checked-mypy-%231674b1)](http://mypy.readthedocs.io)
@@ -18,10 +18,11 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 <!-- docsub: end -->
 
-## Features
 
 <!-- docsub: begin -->
 <!-- docsub: include docs/features.md -->
+# Features
+
 * Evaluate doctests
 * Configure doctest globals and `setUp`–`tearDown`
 * Relies on `unittest.TestCase`
@@ -34,23 +35,17 @@
 * Tested with Python 2.7+
 <!-- docsub: end -->
 
-## Alternatives
 
-<!-- docsub: begin -->
-<!-- docsub: include docs/alternatives.md -->
-* `doctest.DocTestSuite` allows to run doctests with `unittest`, but individual doctests can't be extended, parametrized, or enclosed with `setUp`–`tearDown`.
-<!-- docsub: end -->
-
-
-## Installation
+# Installation
 
 ```shell
 $ pip install doctestcase
 ```
 
-## Use cases
 
-<!-- docsub: begin #readme -->
+# Usage
+
+<!-- docsub: begin #docs.usage.md -->
 <!-- docsub: include docs/usage.md -->
 * Decorated `TestCase`
 * Reuse `__doctestcase__` from other `TestCase`
@@ -380,9 +375,12 @@ def case(case: str) -> None:
     click.echo(text, nl=False)
 ````
 <!-- docsub: end -->
-<!-- docsub: end #readme -->
+<!-- docsub: end #docs.usage.md -->
 
-## See also
 
-* [Project documentation](https://doctestcase.readthedocs.io/en/latest)
-* [Project changelog](https://github.com/makukha/doctestcase/tree/main/CHANGELOG.md)
+# See also
+
+* [Documentation](https://doctestcase.readthedocs.io)
+* [Changelog](https://github.com/makukha/doctestcase/tree/main/CHANGELOG.md)
+* [Issues](https://github.com/makukha/doctestcase/issues)
+* [License](https://github.com/makukha/doctestcase/tree/main/LICENSE)
