@@ -8,7 +8,7 @@ bump:
     read PART
     uv run bump-my-version bump -- "$PART"
     uv lock
-    copier update --defaults --trust --skip-unswered --data project_version="$(just version)"
+    copier update --defaults --trust --skip-answered --data project_version="$(just version)"
 
 # show current version
 [group('project')]
