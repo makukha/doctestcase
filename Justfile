@@ -97,8 +97,11 @@ pre-merge:
 [group('manage')]
 merge:
     just pre-merge
-    just gh-push
-    just gh-pr
+    just gh-create-pr
+    just confirm "Merge pull request"
+    git switch main
+    git fetch
+    git pull
 
 # release
 [group('manage')]
@@ -106,15 +109,9 @@ release:
     just pre-merge
     just bump
     just changelog
-    just confirm "Proofread the changelog"
-    just pre-merge
-    just confirm "Commit changes"
-    just gh-pr
-    just confirm "Merge pull request"
-    git switch main
-    git fetch
-    git pull
+    just confirm "Proofread the changelog and commit changes"
+    just merge
     just gh-repo-upd
-    just gh-release
+    just gh-create-release
     just confirm "Update release notes and publish GitHub release"
     just pypi-publish
