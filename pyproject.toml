@@ -67,6 +67,7 @@ docs = [
   "sphinx-sitemap ; python_version >= '3.12'",
 ]
 testing = [
+  "docsub>=0.9.0 ; python_version >= '3.9'",  # used in tests
   "doctestcase>=0.2.1",
   "mypy ; python_version >= '3.8'",  # see tox.ini
   "pytest>=8 ; python_version >= '3.8'",  # see tox.ini
@@ -103,11 +104,19 @@ path = "src/doctestcase/__version__.py"
 incremental = false
 python_version = "3.9"
 strict = true
-exclude = ["tests/usage"]
+exclude = [
+  "tests/docsub",  # todo: include back when docsub typing is fixed
+  "tests/usage",
+]
 [[tool.mypy.overrides]]
 module = "tests.*"
 allow_incomplete_defs = true
 allow_untyped_defs = true
+
+# pytest
+
+[tool.pytest.ini_options]
+ignore = ["tests/usage"]
 
 # ruff
 
