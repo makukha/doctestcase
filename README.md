@@ -23,8 +23,6 @@
 
 <!-- docsub: begin -->
 <!-- docsub: include docs/features.md -->
-# Features
-
 * Evaluate doctests
 * Configure doctest globals and `setUp`–`tearDown`
 * Relies on `unittest.TestCase`
@@ -88,10 +86,10 @@ class SimpleCase(TestCase):
     True
     """
 
-    def test_custom(self):  # called before 'test_docstring'
+    def test_custom(self) -> None:  # called before 'test_docstring'
         self.assertTrue(True)
 
-    def test_other(self):  # called after 'test_docstring'
+    def test_other(self) -> None:  # called after 'test_docstring'
         self.assertTrue(True)
 ```
 <!-- docsub: end -->

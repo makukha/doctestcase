@@ -348,6 +348,7 @@ dev = [
     { name = "mypy", version = "1.15.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
     { name = "ruff", marker = "python_full_version >= '3.13'" },
     { name = "scriv", marker = "python_full_version >= '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version >= '3.13'" },
 ]
 sphinx = [
     { name = "furo", marker = "python_full_version >= '3.12'" },
@@ -374,9 +375,10 @@ dev = [
     { name = "bump-my-version", marker = "python_full_version >= '3.13'", specifier = ">=1.0" },
     { name = "docsub", marker = "python_full_version >= '3.13'", specifier = ">=0.9.0" },
     { name = "genbadge", extras = ["tests", "coverage"], marker = "python_full_version >= '3.13'", specifier = ">=1.1" },
-    { name = "mypy", marker = "python_full_version >= '3.13'", specifier = ">=1.15" },
+    { name = "mypy", marker = "python_full_version >= '3.13'", specifier = ">=1.0" },
     { name = "ruff", marker = "python_full_version >= '3.13'", specifier = ">=0.9" },
     { name = "scriv", marker = "python_full_version >= '3.13'", specifier = ">=1.5" },
+    { name = "typing-extensions", marker = "python_full_version >= '3.13'", specifier = ">=4" },
 ]
 sphinx = [
     { name = "furo", marker = "python_full_version >= '3.12'" },
@@ -389,7 +391,7 @@ sphinx = [
 testing = [
     { name = "docsub", marker = "python_full_version >= '3.9'", specifier = ">=0.9.0" },
     { name = "doctestcase", specifier = ">=0.2.2" },
-    { name = "mypy", marker = "python_full_version >= '3.8'" },
+    { name = "mypy", marker = "python_full_version >= '3.8'", specifier = ">=1" },
     { name = "pytest", marker = "python_full_version >= '3.8'", specifier = ">=8" },
     { name = "pytest-cov", marker = "python_full_version >= '3.13'", specifier = ">=6" },
     { name = "pytest-sugar", marker = "python_full_version >= '3.13'", specifier = ">=1" },
