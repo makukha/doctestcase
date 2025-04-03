@@ -48,8 +48,8 @@ $ pip install doctestcase
 <!-- docsub: begin #docs.usage.md -->
 <!-- docsub: include docs/usage.md -->
 * Decorated `TestCase`
-* Reuse `__doctestcase__` from other `TestCase`
 * Parametrize test case
+* Reuse `__doctestcase__` from other `TestCase`
 * Inherit from decorated `TestCase`
 * Format docstring as Markdown or reStructuredText
 * Integration with [docsub](https://github.com/makukha/docsub)
@@ -91,59 +91,10 @@ class SimpleCase(TestCase):
 
     def test_other(self):  # called after 'test_docstring'
         self.assertTrue(True)
-
 ```
 <!-- docsub: end -->
 
 All test methods are called by `unittest` in alphabetic order, including `test_docstring`, added by `@doctestcase`.
-
-
-### Reuse `__doctestcase__` from other `TestCase`
-
-Extending example above,
-
-<!-- docsub: begin -->
-<!-- docsub: include tests/usage/reuse.py -->
-<!-- docsub: lines after 1 upto -1 -->
-```python
-@SimpleCase.__doctestcase__
-class AnotherCase(TestCase):
-    """
-    Title
-
-    >>> X * 100
-    'yzyz...'
-    """
-```
-<!-- docsub: end -->
-
-Now `AnotherCase.__doctestcase__` holds shallow copy of `globals`, `kwargs`, and same doctest options, as `SimpleCase`. These copies are independent.
-
-
-### Inherit from decorated class
-
-Inheriting from another test case decorated with `@doctestcase` allows to reuse and extend `globals` and `kwargs` and override doctest options of the base class.
-
-Extending examples above,
-
-<!-- docsub: begin -->
-<!-- docsub: include tests/usage/inherit.py -->
-<!-- docsub: lines after 1 upto -1 -->
-```python
-@doctestcase(globals={'A': 'bc'})
-class InheritedCase(SimpleCase):
-    """
-    Title
-
-    >>> (X + A) * 100
-    'yzbcyzbc...'
-    """
-```
-<!-- docsub: end -->
-
-Notice that global variable `A` was added to `globals` defined in `SimpleCase`, and the new class reuses `doctest.ELLIPSIS` option.
-
-For more details on how `doctestcase` properties are updated, check the [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html).
 
 
 ### Parametrize doctest case
@@ -202,6 +153,28 @@ class Case1(ChdirTestCase):
 <!-- docsub: end -->
 
 
+### Reuse `__doctestcase__` from other `TestCase`
+
+Extending example above,
+
+<!-- docsub: begin -->
+<!-- docsub: include tests/usage/reuse.py -->
+<!-- docsub: lines after 1 upto -1 -->
+```python
+@SimpleCase.__doctestcase__
+class AnotherCase(TestCase):
+    """
+    Title
+
+    >>> X * 100
+    'yzyz...'
+    """
+```
+<!-- docsub: end -->
+
+Now `AnotherCase.__doctestcase__` holds shallow copy of `globals`, `kwargs`, and same doctest options, as `SimpleCase`. These copies are independent.
+
+
 ### Inherit from decorated `TestCase`
 
 Test cases, decorated with `@doctestcase`, can be used as base classes for other test cases. This is useful when inherited classes need to extend or change properties, passed to parent's `@doctestcase`. Parent properties will be copied and updated with values from child class decorator.
@@ -222,6 +195,10 @@ class InheritedCase(SimpleCase):
     """
 ````
 <!-- docsub: end -->
+
+Notice that global variable `A` was added to `globals` defined in `SimpleCase`, and the new class reuses `doctest.ELLIPSIS` option.
+
+For more details on how `doctestcase` properties are updated, check the [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html).
 
 
 ### Format docstring as Markdown or reStructuredText
