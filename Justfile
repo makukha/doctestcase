@@ -38,6 +38,7 @@ upgrade:
     make requirements
     uvx copier update --trust --vcs-ref main
     just sync
+    just docs
 
 # run linters
 [group('develop')]
