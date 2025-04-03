@@ -117,7 +117,7 @@ allow_untyped_defs = true
 # pytest
 
 [tool.pytest.ini_options]
-ignore = ["tests/usage"]
+addopts = "--ignore=tests/usage"
 
 # ruff
 
