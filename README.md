@@ -16,6 +16,7 @@
 [![mypy](https://img.shields.io/badge/type_checked-mypy-%231674b1)](http://mypy.readthedocs.io)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/ruff)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10377/badge)](https://www.bestpractices.dev/projects/10377)
 <!-- docsub: end -->
 
 
@@ -369,7 +370,7 @@ Pull requests, feature requests, and bug reports are welcome!
 
 # See also
 
-* [Documentation](https://doctestcase.readthedocs.io)
+* [Documentation](https://doctestcase.rtfd.io)
 * [Issues](https://github.com/makukha/doctestcase/issues)
 * [Changelog](https://github.com/makukha/doctestcase/blob/main/CHANGELOG.md)
 * [Security Policy](https://github.com/makukha/doctestcase/blob/main/.github/SECURITY.md)
