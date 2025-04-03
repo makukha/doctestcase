@@ -87,10 +87,10 @@ class SimpleCase(TestCase):
     True
     """
 
-    def test_custom(self) -> None:  # called before 'test_docstring'
+    def test_custom(self):  # called before 'test_docstring'
         self.assertTrue(True)
 
-    def test_other(self) -> None:  # called after 'test_docstring'
+    def test_other(self):  # called after 'test_docstring'
         self.assertTrue(True)
 ```
 <!-- docsub: end -->
@@ -103,7 +103,7 @@ All test methods are called by `unittest` in alphabetic order, including `test_d
 First, define base class parametrized with `cwd`:
 
 <!-- docsub: begin -->
-<!-- docsub: include tests/usage/param-base.py -->
+<!-- docsub: include tests/usage/param_base.py -->
 <!-- docsub: lines after 1 upto -1 -->
 ````python
 from doctest import ELLIPSIS
@@ -140,7 +140,7 @@ In this example we use `os.path` module for compatibility with older Python vers
 Now we can define test case parametrized with `cwd`:
 
 <!-- docsub: begin -->
-<!-- docsub: include tests/usage/param-child.py -->
+<!-- docsub: include tests/usage/param_child.py -->
 <!-- docsub: lines after 1 upto -1 -->
 ````python
 @doctestcase(cwd='subdir')
