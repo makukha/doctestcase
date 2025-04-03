@@ -26,4 +26,3 @@ class SimpleCase(TestCase):
 
     def test_other(self):  # called after 'test_docstring'
         self.assertTrue(True)
-
