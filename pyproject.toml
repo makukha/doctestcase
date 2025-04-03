@@ -107,7 +107,6 @@ python_version = "3.9"
 strict = true
 exclude = [
   "tests/docsub",  # todo: include back when docsub typing is fixed
-  "tests/usage",
 ]
 [[tool.mypy.overrides]]
 module = "tests.*"
