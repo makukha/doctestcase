@@ -19,6 +19,8 @@
 <!-- docsub: end -->
 
 
+# Features
+
 <!-- docsub: begin -->
 <!-- docsub: include docs/features.md -->
 # Features
@@ -355,9 +357,24 @@ def case(case: str) -> None:
 <!-- docsub: end #docs.usage.md -->
 
 
+# Contributing
+
+Pull requests, feature requests, and bug reports are welcome!
+
+* [Contribution guidelines](https://github.com/makukha/doctestcase/blob/main/.github/CONTRIBUTING.md)
+
+
+# Authors
+
+* Michael Makukha
+
+
 # See also
 
 * [Documentation](https://doctestcase.readthedocs.io)
-* [Changelog](https://github.com/makukha/doctestcase/tree/main/CHANGELOG.md)
 * [Issues](https://github.com/makukha/doctestcase/issues)
-* [License](https://github.com/makukha/doctestcase/tree/main/LICENSE)
+* [Changelog](https://github.com/makukha/doctestcase/blob/main/CHANGELOG.md)
+* [Security Policy](https://github.com/makukha/doctestcase/blob/main/.github/SECURITY.md)
+* [Contribution Guidelines](https://github.com/makukha/doctestcase/blob/main/.github/CONTRIBUTING.md)
+* [Code of Conduct](https://github.com/makukha/doctestcase/blob/main/.github/CODE_OF_CONDUCT.md)
+* [License](https://github.com/makukha/doctestcase/blob/main/LICENSE)
