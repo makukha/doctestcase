@@ -1,0 +1,3 @@
+from tests.usage.simple import SimpleCase
+
+class InheritedCase(SimpleCase): ...

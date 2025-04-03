@@ -15,9 +15,9 @@ with open('tests/usage/inherit.py') as f:
     exec(f.read())
 
 # use case: param
-with open('tests/usage/param-base.py') as f:
+with open('tests/usage/param_base.py') as f:
     exec(f.read())
-with open('tests/usage/param-child.py') as f:
+with open('tests/usage/param_child.py') as f:
     exec(f.read())
 
 

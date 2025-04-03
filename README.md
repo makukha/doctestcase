@@ -16,13 +16,14 @@
 [![mypy](https://img.shields.io/badge/type_checked-mypy-%231674b1)](http://mypy.readthedocs.io)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/ruff)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10377/badge)](https://www.bestpractices.dev/projects/10377)
 <!-- docsub: end -->
 
 
-<!-- docsub: begin -->
-<!-- docsub: include docs/features.md -->
 # Features
 
+<!-- docsub: begin -->
+<!-- docsub: include docs/features.md -->
 * Evaluate doctests
 * Configure doctest globals and `setUp`–`tearDown`
 * Relies on `unittest.TestCase`
@@ -48,8 +49,8 @@ $ pip install doctestcase
 <!-- docsub: begin #docs.usage.md -->
 <!-- docsub: include docs/usage.md -->
 * Decorated `TestCase`
-* Reuse `__doctestcase__` from other `TestCase`
 * Parametrize test case
+* Reuse `__doctestcase__` from other `TestCase`
 * Inherit from decorated `TestCase`
 * Format docstring as Markdown or reStructuredText
 * Integration with [docsub](https://github.com/makukha/docsub)
@@ -91,59 +92,10 @@ class SimpleCase(TestCase):
 
     def test_other(self):  # called after 'test_docstring'
         self.assertTrue(True)
-
 ```
 <!-- docsub: end -->
 
 All test methods are called by `unittest` in alphabetic order, including `test_docstring`, added by `@doctestcase`.
-
-
-### Reuse `__doctestcase__` from other `TestCase`
-
-Extending example above,
-
-<!-- docsub: begin -->
-<!-- docsub: include tests/usage/reuse.py -->
-<!-- docsub: lines after 1 upto -1 -->
-```python
-@SimpleCase.__doctestcase__
-class AnotherCase(TestCase):
-    """
-    Title
-
-    >>> X * 100
-    'yzyz...'
-    """
-```
-<!-- docsub: end -->
-
-Now `AnotherCase.__doctestcase__` holds shallow copy of `globals`, `kwargs`, and same doctest options, as `SimpleCase`. These copies are independent.
-
-
-### Inherit from decorated class
-
-Inheriting from another test case decorated with `@doctestcase` allows to reuse and extend `globals` and `kwargs` and override doctest options of the base class.
-
-Extending examples above,
-
-<!-- docsub: begin -->
-<!-- docsub: include tests/usage/inherit.py -->
-<!-- docsub: lines after 1 upto -1 -->
-```python
-@doctestcase(globals={'A': 'bc'})
-class InheritedCase(SimpleCase):
-    """
-    Title
-
-    >>> (X + A) * 100
-    'yzbcyzbc...'
-    """
-```
-<!-- docsub: end -->
-
-Notice that global variable `A` was added to `globals` defined in `SimpleCase`, and the new class reuses `doctest.ELLIPSIS` option.
-
-For more details on how `doctestcase` properties are updated, check the [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html).
 
 
 ### Parametrize doctest case
@@ -151,7 +103,7 @@ For more details on how `doctestcase` properties are updated, check the [API Ref
 First, define base class parametrized with `cwd`:
 
 <!-- docsub: begin -->
-<!-- docsub: include tests/usage/param-base.py -->
+<!-- docsub: include tests/usage/param_base.py -->
 <!-- docsub: lines after 1 upto -1 -->
 ````python
 from doctest import ELLIPSIS
@@ -188,7 +140,7 @@ In this example we use `os.path` module for compatibility with older Python vers
 Now we can define test case parametrized with `cwd`:
 
 <!-- docsub: begin -->
-<!-- docsub: include tests/usage/param-child.py -->
+<!-- docsub: include tests/usage/param_child.py -->
 <!-- docsub: lines after 1 upto -1 -->
 ````python
 @doctestcase(cwd='subdir')
@@ -200,6 +152,28 @@ class Case1(ChdirTestCase):
     """
 ````
 <!-- docsub: end -->
+
+
+### Reuse `__doctestcase__` from other `TestCase`
+
+Extending example above,
+
+<!-- docsub: begin -->
+<!-- docsub: include tests/usage/reuse.py -->
+<!-- docsub: lines after 1 upto -1 -->
+```python
+@SimpleCase.__doctestcase__
+class AnotherCase(TestCase):
+    """
+    Title
+
+    >>> X * 100
+    'yzyz...'
+    """
+```
+<!-- docsub: end -->
+
+Now `AnotherCase.__doctestcase__` holds shallow copy of `globals`, `kwargs`, and same doctest options, as `SimpleCase`. These copies are independent.
 
 
 ### Inherit from decorated `TestCase`
@@ -222,6 +196,10 @@ class InheritedCase(SimpleCase):
     """
 ````
 <!-- docsub: end -->
+
+Notice that global variable `A` was added to `globals` defined in `SimpleCase`, and the new class reuses `doctest.ELLIPSIS` option.
+
+For more details on how `doctestcase` properties are updated, check the [API Reference](https://doctestcase.readthedocs.io/en/latest/api.html).
 
 
 ### Format docstring as Markdown or reStructuredText
@@ -378,9 +356,24 @@ def case(case: str) -> None:
 <!-- docsub: end #docs.usage.md -->
 
 
+# Contributing
+
+Pull requests, feature requests, and bug reports are welcome!
+
+* [Contribution guidelines](https://github.com/makukha/doctestcase/blob/main/.github/CONTRIBUTING.md)
+
+
+# Authors
+
+* Michael Makukha
+
+
 # See also
 
 * [Documentation](https://doctestcase.readthedocs.io)
-* [Changelog](https://github.com/makukha/doctestcase/tree/main/CHANGELOG.md)
 * [Issues](https://github.com/makukha/doctestcase/issues)
-* [License](https://github.com/makukha/doctestcase/tree/main/LICENSE)
+* [Changelog](https://github.com/makukha/doctestcase/blob/main/CHANGELOG.md)
+* [Security Policy](https://github.com/makukha/doctestcase/blob/main/.github/SECURITY.md)
+* [Contribution Guidelines](https://github.com/makukha/doctestcase/blob/main/.github/CONTRIBUTING.md)
+* [Code of Conduct](https://github.com/makukha/doctestcase/blob/main/.github/CODE_OF_CONDUCT.md)
+* [License](https://github.com/makukha/doctestcase/blob/main/LICENSE)

@@ -1,5 +1,3 @@
-# Features
-
 * Evaluate doctests
 * Configure doctest globals and `setUp`–`tearDown`
 * Relies on `unittest.TestCase`

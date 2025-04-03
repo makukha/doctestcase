@@ -18,7 +18,7 @@ requirements: docs/sphinx/requirements.txt tests/requirements.txt
 docs/sphinx/requirements.txt: uv.lock
 	uv export --frozen --no-emit-project --only-group sphinx > $@
 tests/requirements.txt: uv.lock
-	uv export --frozen --no-emit-project --only-group testing > $@
+	uv export --frozen --no-emit-project --no-hashes --only-group testing > $@
 
 .PHONY: docs
 docs: sphinx README.md

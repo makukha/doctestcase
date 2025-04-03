@@ -2,6 +2,9 @@ import? '.just/changelog.just'
 import? '.just/gh.just'
 import? '.just/version.just'
 
+set shell := ['zsh', '-c']
+docker := if `command -v docker || true` == "" { "podman" } else { "docker" }
+
 # list available commands
 default:
     @just --list
@@ -10,18 +13,22 @@ default:
 # Develop
 #
 
+# run once on project creation
+[group('develop')]
+seed:
+    echo -e "#!/usr/bin/env sh\njust pre-commit" > .git/hooks/pre-commit
+
 # initialize dev environment
-[group('develop'), macos]
-init:
-    sudo port install gh git uv yq
-    echo -e "#!/usr/bin/env bash\njust pre-commit" > .git/hooks/pre-commit
-    chmod ug+x .git/hooks/*
-    just sync
+[group('develop'), linux, macos]
+pre:
+    brew install gh git uv yq
 
 # synchronize dev environment
 [group('develop')]
 sync:
-    uv sync --all-extras --all-groups
+    chmod ug+x .git/hooks/*
+    uv lock
+    uv sync --all-extras --all-groups --frozen
     make requirements
 
 # update dev environment
@@ -29,7 +36,9 @@ sync:
 upgrade:
     uv sync --all-extras --all-groups --upgrade
     make requirements
-    copier update --defaults --trust --vcs-ref main
+    uvx copier update --trust --vcs-ref main
+    just sync
+    just docs
 
 # run linters
 [group('develop')]
@@ -38,19 +47,27 @@ lint:
     uv run ruff check
     uv run ruff format --diff
 
+[private]
+tox-provision:
+    time {{ docker }} compose run --rm tox run --notest --skip-pkg-install
+
 # run tests
 [group('develop')]
 test *toxargs: build
     make tests/requirements.txt
-    time docker compose run --rm -it tox \
+    mkdir -p .tox
+    find .tox -name '.pass-*' -delete
+    {{ if toxargs == "" { "just tox-provision" } else { "" } }}
+    time {{ docker }} compose run --rm tox \
         {{ if toxargs == "" { "run-parallel" } else { "run" } }} \
          --installpkg="$(find dist -name '*.whl')" {{toxargs}}
     make badges
+    just docs
 
 # enter testing docker container
 [group('develop')]
 shell:
-    docker compose run --rm -it --entrypoint bash tox
+    {{ docker }} compose run --rm --entrypoint bash tox
 
 # build python package
 [group('develop')]

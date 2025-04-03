@@ -14,6 +14,10 @@ doctestcase
 .. include:: ../badges.md
     :parser: commonmark
 
+
+Features
+--------
+
 .. include:: ../features.md
     :parser: commonmark
 
