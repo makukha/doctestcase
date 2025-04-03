@@ -1,11 +1,11 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: 35dc063
+_commit: fb65b2f
 _src_path: gh:makukha/copython
 author_email: m.makukha@gmail.com
 author_name: Michael Makukha
 copyright_year: 2025
 docs: readthedocs
-docs_url: https://doctestcase.rtfd.io
+docs_url: https://doctestcase.readthedocs.io
 github_slug: makukha/doctestcase
 github_url: https://github.com/makukha/doctestcase
 module_name: doctestcase

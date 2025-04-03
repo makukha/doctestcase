@@ -370,7 +370,7 @@ Pull requests, feature requests, and bug reports are welcome!
 
 # See also
 
-* [Documentation](https://doctestcase.rtfd.io)
+* [Documentation](https://doctestcase.readthedocs.io)
 * [Issues](https://github.com/makukha/doctestcase/issues)
 * [Changelog](https://github.com/makukha/doctestcase/blob/main/CHANGELOG.md)
 * [Security Policy](https://github.com/makukha/doctestcase/blob/main/.github/SECURITY.md)
