@@ -24,9 +24,10 @@
 
 <!-- docsub: begin -->
 <!-- docsub: include docs/features.md -->
-* Evaluate doctests
-* Configure doctest globals and `setUp`–`tearDown`
-* Relies on `unittest.TestCase`
+* Combines `unittest.TestCase` and `doctest`
+* Inject globals into doctests
+* Mock doctests
+* Respect `setUp()` and `tearDown()`
 * Minimalistic decorator-based API
 * Format docstring as Markdown and reST to include in docs
 * Naturally fits [docsub](https://github.com/makukha/docsub)-based pipeline
@@ -96,6 +97,39 @@ class SimpleCase(TestCase):
 <!-- docsub: end -->
 
 All test methods are called by `unittest` in alphabetic order, including `test_docstring`, added by `@doctestcase`.
+
+
+### Mock doctests
+
+In classes decorated with `@doctestcase`, `unittest.mock` patches apply to doctests
+too, if patching is applied above `@doctestcase()` decorator. For Python below 3.3,
+use [mock](https://pypi.org/project/mock/) package instead.
+
+<!-- docsub: begin -->
+<!-- docsub: include tests/usage/mock.py -->
+<!-- docsub: lines after 1 upto -1 -->
+````python
+import time
+from unittest import TestCase, mock
+
+from doctestcase import doctestcase
+
+
+@mock.patch('time.time', mock.MagicMock(return_value=0))
+@doctestcase()
+class WithPatchedTime(TestCase):
+    """
+    Mocking modules in doctests and testcase methods
+
+    >>> import time
+    >>> time.time()
+    0
+    """
+
+    def test_method(self):
+        self.assertEqual(0, time.time())
+````
+<!-- docsub: end -->
 
 
 ### Parametrize doctest case
